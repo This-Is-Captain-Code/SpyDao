@@ -29,7 +29,7 @@ export function HeroSection() {
                   disabled={isConnecting}
                   className="bg-black hover:bg-gray-800 text-white text-base font-semibold px-6 py-3 rounded-lg shadow-lg transition-all duration-300"
                 >
-                  Join the Revolution
+                  Get Started
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
 
@@ -45,32 +45,93 @@ export function HeroSection() {
               </div>
             </div>
 
-            {/* Vector Illustration Placeholder - Right Side */}
+            {/* Animated SVG Illustration - Right Side */}
             <div className="flex items-center justify-center lg:justify-end">
-              <div className="w-full max-w-md h-80 lg:h-96 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 rounded-2xl flex items-center justify-center relative overflow-hidden">
-                {/* Placeholder SVG Illustration */}
+              <div className="w-full max-w-md h-80 lg:h-96 flex items-center justify-center relative overflow-hidden">
                 <svg
                   className="w-full h-full"
                   viewBox="0 0 400 400"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  {/* Background circles */}
-                  <circle cx="200" cy="200" r="150" fill="rgba(0, 0, 0, 0.05)" />
-                  <circle cx="200" cy="200" r="120" fill="rgba(0, 0, 0, 0.03)" />
+                  <defs>
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="rgba(0, 0, 0, 0.1)" />
+                      <stop offset="100%" stopColor="rgba(0, 0, 0, 0.05)" />
+                    </linearGradient>
+                  </defs>
                   
-                  {/* Abstract shapes representing governance/voting */}
-                  <rect x="150" y="120" width="100" height="80" rx="8" fill="rgba(0, 0, 0, 0.1)" />
-                  <circle cx="200" cy="160" r="30" fill="rgba(0, 0, 0, 0.15)" />
+                  {/* Animated background circles */}
+                  <circle cx="200" cy="200" r="150" fill="url(#grad1)" className="animate-pulse" />
                   
-                  {/* Connecting lines */}
-                  <line x1="200" y1="200" x2="250" y2="250" stroke="rgba(0, 0, 0, 0.2)" strokeWidth="2" />
-                  <line x1="200" y1="200" x2="150" y2="250" stroke="rgba(0, 0, 0, 0.2)" strokeWidth="2" />
+                  {/* Animated voting/gov nodes */}
+                  <g style={{ animation: 'bounce-slow 3s ease-in-out infinite' }}>
+                    <circle cx="150" cy="150" r="20" fill="rgba(0, 0, 0, 0.15)" />
+                    <circle cx="150" cy="150" r="8" fill="rgba(0, 0, 0, 0.3)" />
+                  </g>
                   
-                  {/* Small nodes */}
-                  <circle cx="250" cy="250" r="15" fill="rgba(0, 0, 0, 0.1)" />
-                  <circle cx="150" cy="250" r="15" fill="rgba(0, 0, 0, 0.1)" />
-                  <circle cx="200" cy="280" r="15" fill="rgba(0, 0, 0, 0.1)" />
+                  <g style={{ animation: 'bounce-slow 3s ease-in-out infinite 1s' }}>
+                    <circle cx="250" cy="150" r="20" fill="rgba(0, 0, 0, 0.15)" />
+                    <circle cx="250" cy="150" r="8" fill="rgba(0, 0, 0, 0.3)" />
+                  </g>
+                  
+                  <g style={{ animation: 'bounce-slow 3s ease-in-out infinite 2s' }}>
+                    <circle cx="200" cy="250" r="20" fill="rgba(0, 0, 0, 0.15)" />
+                    <circle cx="200" cy="250" r="8" fill="rgba(0, 0, 0, 0.3)" />
+                  </g>
+                  
+                  {/* Animated connecting lines */}
+                  <line 
+                    x1="150" 
+                    y1="150" 
+                    x2="200" 
+                    y2="250" 
+                    stroke="rgba(0, 0, 0, 0.2)" 
+                    strokeWidth="2"
+                    style={{ animation: 'pulse-slow 2s ease-in-out infinite' }}
+                  />
+                  <line 
+                    x1="250" 
+                    y1="150" 
+                    x2="200" 
+                    y2="250" 
+                    stroke="rgba(0, 0, 0, 0.2)" 
+                    strokeWidth="2"
+                    style={{ animation: 'pulse-slow 2s ease-in-out infinite 0.5s' }}
+                  />
+                  <line 
+                    x1="150" 
+                    y1="150" 
+                    x2="250" 
+                    y2="150" 
+                    stroke="rgba(0, 0, 0, 0.2)" 
+                    strokeWidth="2"
+                    style={{ animation: 'pulse-slow 2s ease-in-out infinite 1s' }}
+                  />
+                  
+                  {/* Central governance hub */}
+                  <circle 
+                    cx="200" 
+                    cy="200" 
+                    r="40" 
+                    fill="rgba(0, 0, 0, 0.1)" 
+                    style={{ animation: 'pulse-slow 2.5s ease-in-out infinite' }}
+                  />
+                  <circle cx="200" cy="200" r="15" fill="rgba(0, 0, 0, 0.25)" />
+                  
+                  {/* Rotating outer ring */}
+                  <g transform="translate(200, 200)">
+                    <circle 
+                      cx="0" 
+                      cy="0" 
+                      r="100" 
+                      fill="none" 
+                      stroke="rgba(0, 0, 0, 0.1)" 
+                      strokeWidth="2"
+                      strokeDasharray="10 5"
+                      style={{ animation: 'spin-slow 20s linear infinite' }}
+                    />
+                  </g>
                 </svg>
               </div>
             </div>

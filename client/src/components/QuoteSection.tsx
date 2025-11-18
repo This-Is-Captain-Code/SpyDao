@@ -15,11 +15,11 @@ export function QuoteSection() {
 
           {/* Right Section - Quote Text */}
           <div className="w-full md:flex-1 bg-gray-100 dark:bg-gray-800 p-8 md:p-12 flex flex-col justify-center">
-            <blockquote className="text-2xl md:text-3xl lg:text-4xl font-serif text-gray-900 dark:text-gray-100 leading-relaxed mb-6">
-              Shareholder democracy is not a privilege—it's a right. Your stake equals your voice in shaping corporate America.
+            <blockquote className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-gray-100 leading-tight mb-6">
+              The right to vote is the right upon which all other rights depend.
             </blockquote>
-            <cite className="text-sm md:text-base font-medium text-gray-700 dark:text-gray-300 not-italic self-end">
-              — SPY DAO
+            <cite className="text-sm md:text-base font-bold text-gray-900 dark:text-gray-100 not-italic self-end">
+              — THOMAS PAINE
             </cite>
           </div>
         </div>

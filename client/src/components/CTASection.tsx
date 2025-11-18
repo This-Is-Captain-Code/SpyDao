@@ -10,11 +10,10 @@ export function CTASection() {
       <div className="mx-auto max-w-7xl px-4 text-center">
         <div className="mx-auto max-w-3xl">
           <h2 className="text-4xl font-bold tracking-tight sm:text-5xl text-gray-900 dark:text-white">
-            Ready to Join the Revolution?
+            Start Participating Today
           </h2>
           <p className="mt-6 text-xl text-gray-700 dark:text-gray-300">
-            The future of corporate governance starts with you. Deposit today and 
-            gain instant voting rights across 500 of America's largest companies.
+            Connect your wallet and gain instant voting rights across 500 of America's largest companies.
           </p>
         </div>
 
@@ -25,7 +24,7 @@ export function CTASection() {
             disabled={isConnecting}
             className="bg-black hover:bg-gray-800 text-white text-lg font-semibold px-8 py-4 rounded-xl shadow-lg transition-all duration-300"
           >
-            Connect Your Wallet
+            Connect Wallet
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
           <Button
@@ -33,28 +32,8 @@ export function CTASection() {
             variant="outline"
             className="border-gray-900 dark:border-gray-100 bg-transparent text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800 text-lg px-8 py-4 rounded-xl"
           >
-            Read the Docs
+            View Documentation
           </Button>
-        </div>
-
-        <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-3">
-          <div className="rounded-xl bg-white/20 dark:bg-black/20 p-6 backdrop-blur-sm border border-gray-300 dark:border-gray-700">
-            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Step 1</div>
-            <div className="text-gray-900 dark:text-white font-medium">Connect Wallet</div>
-            <div className="text-gray-600 dark:text-gray-400 text-sm mt-1">Decentralized & Secure</div>
-          </div>
-          
-          <div className="rounded-xl bg-white/20 dark:bg-black/20 p-6 backdrop-blur-sm border border-gray-300 dark:border-gray-700">
-            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Step 2</div>
-            <div className="text-gray-900 dark:text-white font-medium">Deposit & Vote</div>
-            <div className="text-gray-600 dark:text-gray-400 text-sm mt-1">Gain Instant Rights</div>
-          </div>
-          
-          <div className="rounded-xl bg-white/20 dark:bg-black/20 p-6 backdrop-blur-sm border border-gray-300 dark:border-gray-700">
-            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Step 3</div>
-            <div className="text-gray-900 dark:text-white font-medium">Govern Together</div>
-            <div className="text-gray-600 dark:text-gray-400 text-sm mt-1">Shape Corporate America</div>
-          </div>
         </div>
 
         <div className="mt-12 border-t border-gray-300 dark:border-gray-700 pt-8">

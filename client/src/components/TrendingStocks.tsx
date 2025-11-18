@@ -1,4 +1,4 @@
-import { Vote, Users, Shield, Scale } from 'lucide-react';
+import { Vote, Users, Shield, Scale, Heart } from 'lucide-react';
 import { governanceOpportunities } from '@/lib/mock-data';
 
 export function TrendingStocks() {
@@ -76,11 +76,17 @@ export function TrendingStocks() {
           {governanceOpportunities.map((company) => (
             <div
               key={company.symbol}
-              className={`group rounded-xl border p-4 shadow-sm transition-all hover:shadow-lg glass-card ${getParticipationBadge(company.participationLevel)}`}
+              className={`group relative rounded-xl border p-5 shadow-sm transition-all hover:shadow-lg glass-card ${getParticipationBadge(company.participationLevel)}`}
             >
-              <div className="flex items-start justify-between mb-3">
+              {/* Heart Icon - Top Right */}
+              <button className="absolute top-4 right-4 p-1.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                <Heart className="h-4 w-4 text-gray-400 hover:text-red-500 transition-colors" />
+              </button>
+
+              <div className="flex items-start justify-between mb-3 pr-8">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center space-x-2 mb-1">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">$</span>
                     <h3 className="font-semibold text-gray-900 dark:text-white text-base">
                       {company.symbol}
                     </h3>

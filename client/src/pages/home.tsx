@@ -5,6 +5,7 @@ import { QuoteSection } from '@/components/QuoteSection';
 import { TrendingStocks } from '@/components/TrendingStocks';
 import { MeetingsCalendar } from '@/components/MeetingsCalendar';
 import { ValueProps } from '@/components/ValueProps';
+import { StepsSection } from '@/components/StepsSection';
 import { CTASection } from '@/components/CTASection';
 import { Footer } from '@/components/Footer';
 import { Link } from 'wouter';
@@ -39,12 +40,13 @@ export default function Home() {
       </nav>
       
       <HeroSection />
+      <CTASection />
       <Marquee />
       <QuoteSection />
       <TrendingStocks />
       <MeetingsCalendar />
       <ValueProps />
-      <CTASection />
+      <StepsSection />
       <Footer />
     </div>
   );

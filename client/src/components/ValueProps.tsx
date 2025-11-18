@@ -1,9 +1,9 @@
+import { useState, useEffect } from 'react';
 import { 
   Vote, 
   Users, 
   DollarSign, 
   Shield, 
-  Globe, 
   TrendingUp 
 } from 'lucide-react';
 
@@ -12,91 +12,124 @@ const features = [
     icon: Vote,
     title: "Democratic Governance",
     description: "One token equals one vote across all 500 S&P companies. Your stake in the index gives you real voting power.",
-    color: "text-blue-600"
-  },
-  {
-    icon: Users,
-    title: "Collective Power",
-    description: "Pool voting rights with thousands of other investors. Together, we command institutional-level influence.",
-    color: "text-green-600"
+    color: "text-black",
+    details: "Every spDAO token you hold represents a proportional share of voting rights across the entire S&P 500. Unlike traditional index funds where institutions control all votes, SPY DAO ensures your voice is heard in every shareholder meeting, proxy vote, and governance decision."
   },
   {
     icon: DollarSign,
     title: "Passive Income + Governance",
     description: "Earn market returns while actively participating in corporate governance. Get double the value from your investment.",
-    color: "text-yellow-600"
+    color: "text-black",
+    details: "Traditional index investing means giving up governance rights for passive returns. SPY DAO breaks this trade-off. You maintain full market exposure to S&P 500 performance while gaining the ability to vote on critical corporate decisions, maximizing both financial returns and democratic participation."
+  },
+  {
+    icon: Users,
+    title: "Collective Power",
+    description: "Pool voting rights with thousands of other investors. Together, we command institutional-level influence.",
+    color: "text-black",
+    details: "By aggregating voting power from thousands of individual investors, SPY DAO creates a collective voice that rivals institutional shareholders. This pooled approach means your individual stake contributes to meaningful change across corporate America, from ESG initiatives to executive compensation."
   },
   {
     icon: Shield,
     title: "Transparent Ownership",
     description: "Verified on-chain ownership aligned with actual SPY shares through transparent protocols and regulated intermediaries.",
-    color: "text-purple-600"
-  },
-  {
-    icon: Globe,
-    title: "Global Access",
-    description: "Participate in American corporate governance through decentralized protocols. Accessible governance for all qualified investors.",
-    color: "text-indigo-600"
+    color: "text-black",
+    details: "All ownership and voting rights are verified on-chain through zero-knowledge proofs and transparent protocols. Every spDAO token is backed by real SPY shares held by regulated custodians, ensuring your governance rights are legitimate, verifiable, and enforceable."
   },
   {
     icon: TrendingUp,
     title: "Market Returns",
     description: "Get exposure to the entire S&P 500 performance while gaining governance rights. Win-win for passive investors.",
-    color: "text-red-600"
+    color: "text-black",
+    details: "Maintain full exposure to S&P 500 market performance while gaining unprecedented governance capabilities. Your investment tracks the index's returns while you participate in shaping the future of America's largest corporations through active voting and proposal submission."
   }
 ];
 
 export function ValueProps() {
+  const [selectedFeature, setSelectedFeature] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const currentFeature = features[selectedFeature];
+
+  // Auto-rotate features every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setSelectedFeature((prev) => (prev + 1) % features.length);
+        setIsTransitioning(false);
+      }, 300); // Half of transition duration
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section className="py-24 bg-transparent">
       <div className="mx-auto max-w-7xl px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
-            Transform Index Investing
-          </h2>
-          <p className="mt-4 text-lg text-gray-600 dark:text-gray-400">
-            Finally, you can have both passive returns and active governance rights
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature) => (
-            <div
-              key={feature.title}
-              className="group rounded-xl bg-white p-8 shadow-sm transition-all hover:shadow-lg dark:bg-gray-800"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700">
-                <feature.icon className={`h-6 w-6 ${feature.color}`} />
-              </div>
-              <h3 className="mt-4 text-xl font-semibold text-gray-900 dark:text-white">
-                {feature.title}
-              </h3>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">
-                {feature.description}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-16 text-center">
-          <div className="mx-auto max-w-2xl rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 p-8 text-white">
-            <h3 className="text-3xl font-bold mb-4">The $55 Trillion Opportunity</h3>
-            <p className="text-blue-100 mb-6">
-              That's the current market cap of S&P 500 index funds. Today, all that voting power is controlled by a few institutions.
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
+          {/* Left Side - Hero Text with Selectors */}
+          <div className="flex flex-col justify-center">
+            <h2 className="text-4xl lg:text-5xl font-bold tracking-tight text-gray-900 dark:text-white mb-6">
+              Transform Index Investing
+            </h2>
+            <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-8">
+              Finally, you can have both passive returns and active governance rights. Choose a feature to explore:
             </p>
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <div className="text-3xl font-bold text-yellow-400">500</div>
-                <div className="text-sm text-blue-200">Companies</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-yellow-400">10,000+</div>
-                <div className="text-sm text-blue-200">Participants</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold text-yellow-400">100%</div>
-                <div className="text-sm text-blue-200">Governance Rights</div>
-              </div>
+
+            {/* Feature Selectors */}
+            <div className="space-y-1.5">
+              {features.map((feature, index) => (
+                <button
+                  key={feature.title}
+                  onClick={() => {
+                    setIsTransitioning(true);
+                    setTimeout(() => {
+                      setSelectedFeature(index);
+                      setIsTransitioning(false);
+                    }, 300);
+                  }}
+                  className={`w-full text-left rounded-lg p-2.5 transition-all ${
+                    selectedFeature === index
+                      ? 'bg-black text-white shadow-lg'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2.5">
+                    <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${
+                      selectedFeature === index ? 'bg-white/20' : 'bg-white dark:bg-gray-700'
+                    }`}>
+                      <feature.icon className={`h-4 w-4 ${
+                        selectedFeature === index ? 'text-white' : feature.color
+                      }`} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-xs md:text-sm">
+                        {feature.title}
+                      </h3>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Side - Feature Explanation */}
+          <div className="flex flex-col justify-center">
+            <div 
+              className={`p-8 md:p-12 transition-opacity duration-500 ${
+                isTransitioning ? 'opacity-0' : 'opacity-100'
+              }`}
+              style={{ transitionDuration: '600ms' }}
+            >
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                {currentFeature.title}
+              </h3>
+              <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+                {currentFeature.description}
+              </p>
+              <p className="text-base text-gray-600 dark:text-gray-400 leading-relaxed">
+                {currentFeature.details}
+              </p>
             </div>
           </div>
         </div>
