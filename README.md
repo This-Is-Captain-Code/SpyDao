@@ -1,4 +1,3 @@
-````markdown
 # SPY DAO – Democratizing Index Fund Governance
 
 An on-chain governance system that gives SPY-style index investors a structured way to coordinate how their underlying voting rights should be used, with a vault and governor that are designed from day one with compliance and risk controls in mind.
@@ -607,7 +606,3 @@ MIT – see `LICENSE`.
 ## 🏆 Built at Rayls Hackathon
 
 SPY DAO was built for the Rayls Hackathon as a prototype for bringing real-world index fund governance on-chain, with a focus on practical compliance constraints and user-aligned voting mechanisms rather than purely theoretical token voting.
-
-```
-::contentReference[oaicite:0]{index=0}
-```
