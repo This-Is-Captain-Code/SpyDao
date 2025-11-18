@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { getTradingWorker } from "./tradingWorker.js";
 
 const app = express();
 
@@ -46,8 +47,35 @@ app.use((req, res, next) => {
   next();
 });
 
+// Graceful shutdown handling
+const setupGracefulShutdown = (server: any) => {
+  const worker = getTradingWorker();
+  
+  const gracefulShutdown = async (signal: string) => {
+    console.log(`Received ${signal}, starting graceful shutdown...`);
+    
+    try {
+      await worker.handleSignal(signal);
+      server.close(() => {
+        console.log('HTTP server closed');
+        process.exit(0);
+      });
+    } catch (error) {
+      console.error('Error during shutdown:', error);
+      process.exit(1);
+    }
+  };
+
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+  process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2'));
+};
+
 (async () => {
   const server = await registerRoutes(app);
+
+  // Setup graceful shutdown
+  setupGracefulShutdown(server);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
@@ -64,6 +92,15 @@ app.use((req, res, next) => {
     await setupVite(app, server);
   } else {
     serveStatic(app);
+  }
+
+  // Initialize trading worker
+  try {
+    const worker = getTradingWorker();
+    await worker.start();
+    console.log('Trading worker initialized successfully');
+  } catch (error) {
+    console.error('Failed to initialize trading worker:', error);
   }
 
   // ALWAYS serve the app on the port specified in the environment variable PORT
