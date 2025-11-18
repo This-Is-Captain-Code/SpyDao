@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { BrowserProvider } from 'ethers';
 
 interface WalletState {
@@ -13,6 +13,11 @@ export function useWallet() {
     isConnecting: false,
     error: null,
   });
+
+  const provider = useMemo(() => {
+    if (!window.ethereum) return null;
+    return new BrowserProvider(window.ethereum);
+  }, []);
 
   const checkIfWalletIsConnected = useCallback(async () => {
     try {
@@ -106,6 +111,7 @@ export function useWallet() {
     address: state.address,
     isConnecting: state.isConnecting,
     error: state.error,
+    provider,
     connectWallet,
     disconnectWallet,
     truncateAddress,
