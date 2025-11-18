@@ -255,6 +255,346 @@
     background-size: 50px 50px;
   }
 
+  .bg-grid-slate-900\/5 {
+    background-image: 
+      linear-gradient(to right, rgba(15, 23, 42, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  .bg-grid-white\/5 {
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  /* Morphing Gradient Background - Subtle flowing colors */
+  .gradient-morph {
+    background: linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(250, 252, 255, 0.95),
+      rgba(245, 250, 255, 0.9),
+      rgba(240, 248, 255, 0.85),
+      rgba(235, 245, 255, 0.8),
+      rgba(230, 242, 255, 0.75),
+      rgba(225, 240, 255, 0.7),
+      rgba(220, 238, 255, 0.65)
+    );
+    background-size: 400% 400%;
+    animation: gradientFlow 20s ease infinite;
+  }
+
+  @keyframes gradientFlow {
+    0% {
+      background-position: 0% 50%;
+    }
+    25% {
+      background-position: 50% 100%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    75% {
+      background-position: 50% 0%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Dot Pattern Background - Sparse (for background) */
+  .bg-dot-pattern-sparse {
+    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.6) 1.5px, transparent 1.5px);
+    background-size: 40px 40px;
+    background-position: 0 0;
+  }
+
+  /* Animated Dot Pattern with varying opacity */
+  @keyframes dot-pattern-morph {
+    0% {
+      opacity: 0.15;
+      background-position: 0% 0%;
+    }
+    25% {
+      opacity: 0.35;
+      background-position: 25% 25%;
+    }
+    50% {
+      opacity: 0.25;
+      background-position: 50% 50%;
+    }
+    75% {
+      opacity: 0.4;
+      background-position: 75% 75%;
+    }
+    100% {
+      opacity: 0.15;
+      background-position: 100% 100%;
+    }
+  }
+
+  .animated-dot-pattern {
+    animation: dot-pattern-morph 20s ease-in-out infinite;
+    background-size: 40px 40px;
+  }
+
+  /* Dot Pattern Background - Dense (for right side) */
+  .bg-dot-pattern-dense {
+    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.7) 2px, transparent 2px);
+    background-size: 25px 25px;
+    background-position: 0 0;
+  }
+
+  /* Interactive Gradient Background - 3 color combos only, less colorful (50% less, more grey tones) */
+  :root {
+    --color-bg1: rgb(245, 245, 250);
+    --color-bg2: rgb(240, 245, 250);
+    --color1: 100, 120, 180;
+    --color2: 150, 120, 180;
+    --color3: 120, 150, 180;
+    --color-interactive: 130, 130, 200;
+    --circle-size: 80%;
+    --blending: hard-light;
+  }
+
+  @keyframes moveInCircle {
+    0% {
+      transform: rotate(0deg);
+    }
+    50% {
+      transform: rotate(180deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes moveVertical {
+    0% {
+      transform: translateY(-50%);
+    }
+    50% {
+      transform: translateY(50%);
+    }
+    100% {
+      transform: translateY(-50%);
+    }
+  }
+
+  @keyframes moveHorizontal {
+    0% {
+      transform: translateX(-50%) translateY(-10%);
+    }
+    50% {
+      transform: translateX(50%) translateY(10%);
+    }
+    100% {
+      transform: translateX(-50%) translateY(-10%);
+    }
+  }
+
+  .interactive-gradient-bg {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    background: linear-gradient(40deg, var(--color-bg1), var(--color-bg2));
+    z-index: -10;
+  }
+
+  .interactive-gradient-bg svg {
+    display: none;
+  }
+
+  .interactive-gradient-bg .gradients-container {
+    filter: url(#goo) blur(40px);
+    width: 100%;
+    height: 100%;
+  }
+
+  .interactive-gradient-bg .g1 {
+    position: absolute;
+    background: radial-gradient(
+      circle at center,
+      rgba(var(--color1), 0.05) 0,
+      rgba(var(--color1), 0) 50%
+    ) no-repeat;
+    mix-blend-mode: var(--blending);
+    width: var(--circle-size);
+    height: var(--circle-size);
+    top: calc(50% - var(--circle-size) / 2);
+    left: calc(50% - var(--circle-size) / 2);
+    transform-origin: center center;
+    animation: moveVertical 30s ease infinite;
+    opacity: 1;
+  }
+
+  .interactive-gradient-bg .g2 {
+    position: absolute;
+    background: radial-gradient(
+      circle at center,
+      rgba(var(--color2), 0.05) 0,
+      rgba(var(--color2), 0) 50%
+    ) no-repeat;
+    mix-blend-mode: var(--blending);
+    width: var(--circle-size);
+    height: var(--circle-size);
+    top: calc(50% - var(--circle-size) / 2);
+    left: calc(50% - var(--circle-size) / 2);
+    transform-origin: calc(50% - 400px);
+    animation: moveInCircle 20s reverse infinite;
+    opacity: 1;
+  }
+
+  .interactive-gradient-bg .g3 {
+    position: absolute;
+    background: radial-gradient(
+      circle at center,
+      rgba(var(--color3), 0.05) 0,
+      rgba(var(--color3), 0) 50%
+    ) no-repeat;
+    mix-blend-mode: var(--blending);
+    width: var(--circle-size);
+    height: var(--circle-size);
+    top: calc(50% - var(--circle-size) / 2 + 200px);
+    left: calc(50% - var(--circle-size) / 2 - 500px);
+    transform-origin: calc(50% + 400px);
+    animation: moveInCircle 40s linear infinite;
+    opacity: 1;
+  }
+
+
+  .interactive-gradient-bg .interactive {
+    position: absolute;
+    background: radial-gradient(
+      circle at center,
+      rgba(var(--color-interactive), 0.8) 0,
+      rgba(var(--color-interactive), 0) 50%
+    ) no-repeat;
+    mix-blend-mode: var(--blending);
+    width: 150%;
+    height: 150%;
+    top: -25%;
+    left: -25%;
+    opacity: 0.8;
+  }
+
+  /* Marquee Animation */
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+
+  .animate-marquee-reverse {
+    animation: marquee 25s linear infinite reverse;
+  }
+
+  /* Vertical Marquee Animation */
+  @keyframes vertical-marquee {
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-50%);
+    }
+  }
+
+  .animate-vertical-marquee {
+    animation: vertical-marquee 60s linear infinite;
+  }
+
+  .animation-paused {
+    animation-play-state: paused;
+  }
+
+  /* Vertical marquee scrolling down (reverse) */
+  @keyframes vertical-marquee-down {
+    0% {
+      transform: translateY(-50%);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  .animate-vertical-marquee-down {
+    animation: vertical-marquee-down 60s linear infinite;
+  }
+
+  /* Glassmorphism Container - Exact match from Figma */
+  .glass-container-exact {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
+  }
+
+  .dark .glass-container-exact {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Enhanced Glassmorphism Container - More transparent */
+  .glass-container-enhanced {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(60px);
+    -webkit-backdrop-filter: blur(60px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 
+      0 8px 32px 0 rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.4);
+  }
+
+  .dark .glass-container-enhanced {
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Glassmorphic Card Style */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow: 
+      0 4px 16px 0 rgba(0, 0, 0, 0.08),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
+  }
+
+  .dark .glass-card {
+    background: rgba(255, 255, 255, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+  }
+
+  /* Fixed Navigation Bar - Glassmorphic with rounded borders */
+  .glass-nav {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 
+      0 4px 20px 0 rgba(0, 0, 0, 0.05),
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.4);
+  }
+
+  .dark .glass-nav {
+    background: rgba(255, 255, 255, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+  }
+
   /* .no-default-hover-elevate/no-default-active-elevate is an escape hatch so consumers of
    * buttons/badges can remove the automatic brightness adjustment on interactions
    * and program their own. */
