@@ -1,8 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-// Commented out trading worker from previous session - not needed for DApp
-// import { getTradingWorker } from "./tradingWorker.js";
+import { getTradingWorker } from "./tradingWorker.js";
 
 const app = express();
 

@@ -1,11 +1,10 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-// Commented out webhook routes from previous session - not needed for DApp
-// import webhookRoutes from "./routes/webhookRoutes.js";
+import webhookRoutes from "./routes/webhookRoutes.js";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register webhook and trading routes
-  // app.use("/api/webhook", webhookRoutes);
+  app.use("/api/webhook", webhookRoutes);
 
   // Health check endpoint
   app.get("/api/health", async (req, res) => {
