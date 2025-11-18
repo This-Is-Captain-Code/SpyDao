@@ -28,14 +28,14 @@ const features = [
   },
   {
     icon: Shield,
-    title: "Real Ownership",
-    description: "Verified on-chain ownership of actual SPY shares through crypto rails. No brokers, no intermediaries.",
+    title: "Transparent Ownership",
+    description: "Verified on-chain ownership aligned with actual SPY shares through transparent protocols and regulated intermediaries.",
     color: "text-purple-600"
   },
   {
     icon: Globe,
     title: "Global Access",
-    description: "Anyone, anywhere can participate in American corporate governance. No KYC, no borders.",
+    description: "Participate in American corporate governance through decentralized protocols. Accessible governance for all qualified investors.",
     color: "text-indigo-600"
   },
   {
