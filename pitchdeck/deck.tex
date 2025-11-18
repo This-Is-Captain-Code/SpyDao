@@ -80,11 +80,11 @@
 \vspace{0.5cm}
 \begin{center}
     \begin{tikzpicture}
-        \node[circle,fill=lightblue,text=white,minimum size=3cm] at (0,0) {
-            \begin{minipage}{2.5cm}
+        \node[circle,fill=lightblue,text=white,minimum size=4.5cm] at (0,0) {
+            \begin{minipage}{4cm}
                 \centering
-                {\Huge\$55T}\\[0.2cm]
-                {\small in index funds}
+                {\fontsize{50}{60}\selectfont\$55T}\\[0.3cm]
+                {\Large in index funds}
             \end{minipage}
         };
     \end{tikzpicture}
@@ -99,23 +99,35 @@
 
 % Slide 2: Participate in 500 Companies
 \begin{frame}{Participate in 500 Companies}
-\vspace{0.3cm}
+\vspace{0.2cm}
 \begin{center}
     {\LARGE\textcolor{mainblue}{\textbf{S\&P 500}}}
     
-    \vspace{0.8cm}
-    \begin{tikzpicture}
+    \vspace{0.4cm}
+    \begin{tikzpicture}[scale=0.8]
+        % Define company names and positions
+        \def\companies{{"AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA", "BRK", "JPM", "V", "JNJ", "WMT", "PG", "MA", "HD"}}
+        
+        % Draw connections and company bubbles
         \foreach \i in {1,...,15} {
             \pgfmathsetmacro{\angle}{360/15*\i}
-            \pgfmathsetmacro{\radius}{2}
-            \fill[lightblue] ({\radius*cos(\angle)},{\radius*sin(\angle)}) circle (0.2cm);
+            \pgfmathsetmacro{\radius}{2.5}
+            \pgfmathsetmacro{\companyindex}{int(\i-1)}
+            
+            % Draw connecting line from center to company
+            \draw[lightblue,thick,opacity=0.6] (0,0) -- ({\radius*cos(\angle)},{\radius*sin(\angle)});
+            
+            % Draw company bubble
+            \node[circle,fill=lightblue,text=white,minimum size=0.65cm,font=\tiny\bfseries] at ({\radius*cos(\angle)},{\radius*sin(\angle)}) {\pgfmathparse{\companies[\companyindex]}\pgfmathresult};
         }
-        \node[circle,fill=accentgold,text=white,minimum size=1.5cm] at (0,0) {
-            \textbf{YOU}
+        
+        % Central YOU node
+        \node[circle,fill=accentgold,text=white,minimum size=1.5cm,font=\large\bfseries] at (0,0) {
+            YOU
         };
     \end{tikzpicture}
     
-    \vspace{0.8cm}
+    \vspace{0.5cm}
     {\Large One deposit. Complete market access.}
 \end{center}
 \end{frame}
@@ -185,10 +197,6 @@
         }
     \end{tikzpicture}
     
-    \vspace{0.8cm}
-    {\Large\textbf{Permissionless. Borderless. Instant.}}
-    
-    \vspace{0.3cm}
     {\large Global capital meets corporate governance}
 \end{center}
 \end{frame}
@@ -342,8 +350,8 @@
 \end{center}
 \end{frame}
 
-% Slide 12: Permissionless Global Economic Access
-\begin{frame}{Permissionless Global Economic Access}
+% Slide 12: Compliant Global Economic Access
+\begin{frame}{Compliant Global Economic Access}
 \vspace{0.5cm}
 \begin{center}
     \begin{tikzpicture}
@@ -358,8 +366,8 @@
         \node[circle,fill=accentgold,text=white,minimum size=2.5cm] at (0,0) {
             \begin{minipage}{2.2cm}
                 \centering
-                \Large\textbf{No KYC}\\
-                \Large\textbf{No Limits}
+                \Large\textbf{Secure}\\
+                \Large\textbf{Compliant}
             \end{minipage}
         };
     \end{tikzpicture}
@@ -368,7 +376,7 @@
     {\Large\textbf{Financial inclusion meets corporate governance}}
     
     \vspace{0.3cm}
-    {\large Anyone, anywhere, anytime}
+    {\large Regulation-friendly global access}
 \end{center}
 \end{frame}
 
