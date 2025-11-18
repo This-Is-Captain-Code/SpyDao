@@ -1,139 +1,141 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC4626.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 
+interface ISPYPublicOracle {
+    function latestAnswer() external view returns (uint256);
+}
+
 /**
- * @title RaylsVault
- * @notice ERC4626 compliant vault for Rayls chain with admin withdrawal functionality
- * @dev Extends standard ERC4626 with additional admin controls
+ * @title SPYVault
+ * @notice ERC4626 vault that accepts MockUSDC and tracks synthetic SPY exposure
+ * @dev Uses timelocked withdrawals to approved broker wallet only
  */
-contract RaylsVault is ERC4626, Ownable {
+contract SPYVault is ERC4626, ERC20Votes, AccessControl {
     using SafeERC20 for IERC20;
 
+    bytes32 public constant EXECUTOR_ROLE = keccak256("EXECUTOR_ROLE");
+    
+    ISPYPublicOracle public immutable spyOracle;
+    uint256 public syntheticShareBalance; // Total SPY shares held off-chain
+    
+    // ====== Withdrawal Safety Controls ======
+    address public immutable BROKER_WALLET;
+    uint256 public pendingWithdrawalAmount;
+    uint256 public pendingWithdrawalTime;
+    uint256 public constant WITHDRAWAL_DELAY = 2 days;
+    uint256 public constant MAX_SINGLE_WITHDRAWAL = 100_000 * 1e6; // $100k USDC max
+
     // Events
-    event AdminWithdrawal(address indexed admin, uint256 assets, address indexed to);
-    event EmergencyWithdrawal(address indexed admin, uint256 assets, address indexed to);
+    event WithdrawalScheduled(uint256 amount, uint256 executableAt);
+    event SyntheticHoldingsUpdated(uint256 newBalance, uint256 nav);
 
     /**
-     * @notice Constructor to initialize the vault
-     * @param asset_ The underlying ERC20 asset (Mock USD address)
-     * @param name_ Name of the vault share token
-     * @param symbol_ Symbol of the vault share token
-     * @param initialOwner Address of the initial owner/admin
+     * @param _mockUSDC Address of MockUSDC token (underlying asset)
+     * @param _oracle Address of SPY price oracle
+     * @param _executor Address of ZKTLS-verified execution service
+     * @param _brokerWallet Immutable address where funds can be withdrawn for share purchases
      */
     constructor(
-        IERC20 asset_,
-        string memory name_,
-        string memory symbol_,
-        address initialOwner
-    ) ERC4626(asset_) ERC20(name_, symbol_) Ownable(initialOwner) {}
+        IERC20 _mockUSDC,
+        address _oracle,
+        address _executor,
+        address _brokerWallet
+    ) ERC4626(_mockUSDC) ERC20("SPY DAO Share", "spDAO") ERC20Permit("spDAO") {
+        require(_brokerWallet != address(0), "Invalid broker wallet");
+        require(_oracle != address(0), "Invalid oracle");
+        require(_executor != address(0), "Invalid executor");
 
-    /**
-     * @notice Deposit assets into the vault and receive shares
-     * @param assets Amount of assets to deposit
-     * @param receiver Address to receive the vault shares
-     * @return shares Amount of shares minted
-     */
-    function deposit(uint256 assets, address receiver) 
-        public 
-        virtual 
-        override 
-        returns (uint256 shares) 
-    {
-        require(assets > 0, "RaylsVault: Cannot deposit 0");
-        require(receiver != address(0), "RaylsVault: Invalid receiver");
-
-        shares = super.deposit(assets, receiver);
+        spyOracle = ISPYPublicOracle(_oracle);
+        BROKER_WALLET = _brokerWallet;
+        
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(EXECUTOR_ROLE, _executor);
     }
 
     /**
-     * @notice User withdraws their assets by burning shares
-     * @param assets Amount of assets to withdraw
-     * @param receiver Address to receive the assets
-     * @param owner Address of the share owner
-     * @return shares Amount of shares burned
+     * @notice Calculate total assets including off-chain SPY holdings
+     * @return NAV in USDC (6 decimals)
      */
-    function withdraw(
-        uint256 assets,
-        address receiver,
-        address owner
-    ) public virtual override returns (uint256 shares) {
-        require(assets > 0, "RaylsVault: Cannot withdraw 0");
-        require(receiver != address(0), "RaylsVault: Invalid receiver");
-
-        shares = super.withdraw(assets, receiver, owner);
+    function totalAssets() public view override returns (uint256) {
+        uint256 onChainUSDC = asset().balanceOf(address(this));
+        uint256 offChainValue = (spyOracle.latestAnswer() * syntheticShareBalance) / 1e8;
+        return onChainUSDC + offChainValue;
     }
 
     /**
-     * @notice Admin function to withdraw specific amount of assets
-     * @dev Only callable by contract owner
-     * @param assets Amount of assets to withdraw
-     * @param to Address to send the withdrawn assets
+     * @notice Schedule withdrawal to broker wallet (timelocked)
+     * @dev Only callable by executor role. Creates 2-day delay.
+     * @param assets Amount of USDC to withdraw (6 decimals)
      */
-    function adminWithdraw(uint256 assets, address to) 
-        external 
-        onlyOwner 
-    {
-        require(assets > 0, "RaylsVault: Cannot withdraw 0");
-        require(to != address(0), "RaylsVault: Invalid recipient");
-        require(assets <= totalAssets(), "RaylsVault: Insufficient assets");
+    function scheduleBrokerWithdrawal(uint256 assets) external onlyRole(EXECUTOR_ROLE) {
+        require(assets <= MAX_SINGLE_WITHDRAWAL, "Exceeds max withdrawal");
+        require(pendingWithdrawalTime == 0, "Pending withdrawal exists");
+        require(assets <= asset().balanceOf(address(this)), "Insufficient balance");
 
-        IERC20(asset()).safeTransfer(to, assets);
-
-        emit AdminWithdrawal(msg.sender, assets, to);
+        pendingWithdrawalAmount = assets;
+        pendingWithdrawalTime = block.timestamp + WITHDRAWAL_DELAY;
+        
+        emit WithdrawalScheduled(assets, pendingWithdrawalTime);
     }
 
     /**
-     * @notice Emergency admin withdrawal of all assets
-     * @dev Only callable by contract owner. Use with caution!
-     * @param to Address to send all assets
+     * @notice Execute scheduled withdrawal to broker wallet
+     * @dev Only callable by executor after delay period
      */
-    function emergencyWithdrawAll(address to) 
-        external 
-        onlyOwner 
-    {
-        require(to != address(0), "RaylsVault: Invalid recipient");
+    function executeBrokerWithdrawal() external onlyRole(EXECUTOR_ROLE) {
+        require(block.timestamp >= pendingWithdrawalTime, "Delay not met");
+        require(pendingWithdrawalAmount > 0, "No pending withdrawal");
 
-        uint256 totalBalance = totalAssets();
-        require(totalBalance > 0, "RaylsVault: No assets to withdraw");
+        uint256 amount = pendingWithdrawalAmount;
+        delete pendingWithdrawalAmount;
+        delete pendingWithdrawalTime;
 
-        IERC20(asset()).safeTransfer(to, totalBalance);
-
-        emit EmergencyWithdrawal(msg.sender, totalBalance, to);
+        IERC20(asset()).safeTransfer(BROKER_WALLET, amount);
     }
 
     /**
-     * @notice Get the maximum amount of assets an owner can withdraw
-     * @param owner Address of the share owner
-     * @return Maximum withdrawable assets
+     * @notice Cancel pending withdrawal (emergency brake)
+     * @dev Only admin can cancel
      */
-    function maxWithdraw(address owner) 
-        public 
-        view 
-        virtual 
-        override 
-        returns (uint256) 
-    {
-        uint256 ownerAssets = convertToAssets(balanceOf(owner));
-        uint256 vaultAssets = totalAssets();
-        return ownerAssets > vaultAssets ? vaultAssets : ownerAssets;
+    function cancelWithdrawal() external onlyRole(DEFAULT_ADMIN_ROLE) {
+        delete pendingWithdrawalAmount;
+        delete pendingWithdrawalTime;
     }
 
     /**
-     * @notice Get the total assets held by the vault
-     * @return Total amount of underlying assets
+     * @notice Update synthetic SPY holdings after off-chain purchase
+     * @dev Executor submits proof-of-purchase via ZKTLS, then calls this
+     * @param additionalShares Number of SPY shares acquired off-chain
      */
-    function totalAssets() 
-        public 
-        view 
-        virtual 
-        override 
-        returns (uint256) 
-    {
-        return IERC20(asset()).balanceOf(address(this));
+    function increaseSyntheticHoldings(uint256 additionalShares) external onlyRole(EXECUTOR_ROLE) {
+        syntheticShareBalance += additionalShares;
+        emit SyntheticHoldingsUpdated(syntheticShareBalance, totalAssets());
+    }
+
+    /**
+     * @notice View current synthetic holdings for transparency
+     * @return Total SPY shares held off-chain
+     */
+    function getSyntheticHoldings() external view returns (uint256) {
+        return syntheticShareBalance;
+    }
+
+    // ====== OVERRIDES FOR ERC20Votes COMPATIBILITY ======
+
+    function _afterTokenTransfer(address from, address to, uint256 amount) internal override(ERC20, ERC20Votes) {
+        super._afterTokenTransfer(from, to, amount);
+    }
+
+    function _mint(address to, uint256 amount) internal override(ERC20, ERC20Votes) {
+        super._mint(to, amount);
+    }
+
+    function _burn(address from, uint256 amount) internal override(ERC20, ERC20Votes) {
+        super._burn(from, amount);
     }
 }
