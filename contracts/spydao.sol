@@ -20,7 +20,7 @@ contract RaylsVault is ERC4626, Ownable {
 
     /**
      * @notice Constructor to initialize the vault
-     * @param asset_ The underlying ERC20 asset
+     * @param asset_ The underlying ERC20 asset (Mock USD address)
      * @param name_ Name of the vault share token
      * @param symbol_ Symbol of the vault share token
      * @param initialOwner Address of the initial owner/admin
