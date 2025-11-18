@@ -1,12 +1,13 @@
-export interface SPTrendingStock {
+export interface SP500GovernanceOpportunity {
   symbol: string;
   name: string;
-  price: number;
-  change: number;
-  changePercent: number;
   marketCap: string;
   sector: string;
-  trend: 'hot' | 'trending' | 'upcoming';
+  governanceFocus: 'ESG' | 'Executive Compensation' | 'Board Changes' | 'Climate Action' | 'AI Policy';
+  votingPower: string;
+  governanceScore: number;
+  upcomingVote: string;
+  participationLevel: 'High' | 'Medium' | 'Low';
 }
 
 export interface ShareholderMeeting {
@@ -21,86 +22,94 @@ export interface ShareholderMeeting {
   important: boolean;
 }
 
-export const trendingStocks: SPTrendingStock[] = [
+export const governanceOpportunities: SP500GovernanceOpportunity[] = [
   {
     symbol: 'AAPL',
     name: 'Apple Inc.',
-    price: 225.12,
-    change: 3.45,
-    changePercent: 1.56,
     marketCap: '$3.42T',
     sector: 'Technology',
-    trend: 'hot'
+    governanceFocus: 'ESG',
+    votingPower: '5.2M shares',
+    governanceScore: 92,
+    upcomingVote: 'Board Diversity Standards',
+    participationLevel: 'High'
   },
   {
     symbol: 'NVDA',
     name: 'NVIDIA Corporation',
-    price: 145.80,
-    change: 12.15,
-    changePercent: 9.09,
     marketCap: '$3.58T',
     sector: 'Technology',
-    trend: 'hot'
+    governanceFocus: 'AI Policy',
+    votingPower: '8.7M shares',
+    governanceScore: 88,
+    upcomingVote: 'Responsible AI Framework',
+    participationLevel: 'High'
   },
   {
     symbol: 'MSFT',
     name: 'Microsoft Corporation',
-    price: 422.85,
-    change: 2.47,
-    changePercent: 0.59,
     marketCap: '$3.14T',
     sector: 'Technology',
-    trend: 'trending'
+    governanceFocus: 'Climate Action',
+    votingPower: '12.4M shares',
+    governanceScore: 95,
+    upcomingVote: 'Carbon Neutral by 2030',
+    participationLevel: 'High'
   },
   {
     symbol: 'GOOGL',
     name: 'Alphabet Inc.',
-    price: 175.12,
-    change: -1.23,
-    changePercent: -0.70,
     marketCap: '$2.14T',
     sector: 'Technology',
-    trend: 'trending'
+    governanceFocus: 'Executive Compensation',
+    votingPower: '9.1M shares',
+    governanceScore: 84,
+    upcomingVote: 'CEO Compensation Package',
+    participationLevel: 'Medium'
   },
   {
-    symbol: 'AMZN',
-    name: 'Amazon.com Inc.',
-    price: 202.77,
-    change: 4.12,
-    changePercent: 2.07,
-    marketCap: '$2.11T',
-    sector: 'Consumer Discretionary',
-    trend: 'upcoming'
-  },
-  {
-    symbol: 'TSLA',
-    name: 'Tesla Inc.',
-    price: 423.89,
-    change: 8.76,
-    changePercent: 2.11,
-    marketCap: '$1.35T',
-    sector: 'Consumer Discretionary',
-    trend: 'upcoming'
-  },
-  {
-    symbol: 'META',
-    name: 'Meta Platforms Inc.',
-    price: 576.89,
-    change: -5.43,
-    changePercent: -0.93,
-    marketCap: '$1.47T',
-    sector: 'Communication Services',
-    trend: 'trending'
-  },
-  {
-    symbol: 'BRK-B',
-    name: 'Berkshire Hathaway',
-    price: 487.23,
-    change: 1.89,
-    changePercent: 0.39,
-    marketCap: '$1.34T',
+    symbol: 'JPM',
+    name: 'JPMorgan Chase',
+    marketCap: '$648B',
     sector: 'Financial Services',
-    trend: 'upcoming'
+    governanceFocus: 'Board Changes',
+    votingPower: '6.8M shares',
+    governanceScore: 79,
+    upcomingVote: 'Board Independence Policy',
+    participationLevel: 'Medium'
+  },
+  {
+    symbol: 'UNH',
+    name: 'UnitedHealth Group',
+    marketCap: '$523B',
+    sector: 'Healthcare',
+    governanceFocus: 'ESG',
+    votingPower: '4.3M shares',
+    governanceScore: 86,
+    upcomingVote: 'Healthcare Access Metrics',
+    participationLevel: 'Low'
+  },
+  {
+    symbol: 'HD',
+    name: 'Home Depot',
+    marketCap: '$412B',
+    sector: 'Consumer Discretionary',
+    governanceFocus: 'Climate Action',
+    votingPower: '3.9M shares',
+    governanceScore: 91,
+    upcomingVote: 'Sustainable Supply Chain',
+    participationLevel: 'Medium'
+  },
+  {
+    symbol: 'PG',
+    name: 'Procter & Gamble',
+    marketCap: '$389B',
+    sector: 'Consumer Staples',
+    governanceFocus: 'ESG',
+    votingPower: '2.7M shares',
+    governanceScore: 89,
+    upcomingVote: 'Plastic Reduction Initiative',
+    participationLevel: 'High'
   }
 ];
 
