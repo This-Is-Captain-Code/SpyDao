@@ -1,0 +1,467 @@
+\documentclass[aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usecolortheme{default}
+
+% Packages
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+% Custom colors
+\definecolor{spyblue}{RGB}{0,51,102}
+\definecolor{spygold}{RGB}{255,183,0}
+
+\setbeamercolor{structure}{fg=spyblue}
+\setbeamercolor{palette primary}{bg=spyblue,fg=white}
+\setbeamercolor{palette secondary}{bg=spygold,fg=black}
+\setbeamercolor{frametitle}{bg=spyblue,fg=white}
+
+% Title information
+\title{\textbf{SPY DAO}}
+\subtitle{Democratizing Index Fund Governance}
+\author{Rayls Hackathon 2025}
+\date{\today}
+
+\begin{document}
+
+% Title Slide
+\begin{frame}
+\titlepage
+\begin{center}
+\large{\textit{Returning Voting Rights to Index Investors}}
+\end{center}
+\end{frame}
+
+% Slide 1: Unlocking Trillions
+\begin{frame}{Unlocking Trillions}
+\begin{columns}
+\column{0.5\textwidth}
+\textbf{The Problem:}
+\begin{itemize}
+    \item \$14+ trillion locked in S\&P 500 index funds
+    \item Individual investors have zero governance rights
+    \item Corporate control concentrated in fund managers
+    \item Your money, their voice
+\end{itemize}
+
+\column{0.5\textwidth}
+\textbf{The Opportunity:}
+\begin{itemize}
+    \item Democratize corporate governance
+    \item Empower retail investors
+    \item Unlock shareholder democracy
+    \item Web3 enables what Web2 cannot
+\end{itemize}
+\end{columns}
+
+\vspace{0.5cm}
+\begin{center}
+\textit{SPY DAO gives you back your voice in the companies you own}
+\end{center}
+\end{frame}
+
+% Slide 2: Participate in 500 Companies
+\begin{frame}{Participate in 500 Companies}
+\begin{center}
+\textbf{Direct Governance Access Across the S\&P 500}
+\end{center}
+
+\vspace{0.3cm}
+
+\begin{columns}
+\column{0.5\textwidth}
+\textbf{Traditional Index Funds:}
+\begin{itemize}
+    \item Buy shares through Vanguard/BlackRock
+    \item No voting rights
+    \item No transparency
+    \item Fund manager votes on your behalf
+\end{itemize}
+
+\column{0.5\textwidth}
+\textbf{SPY DAO:}
+\begin{itemize}
+    \item Deposit crypto into smart contracts
+    \item Real shares purchased on backend
+    \item Vote on 500 companies democratically
+    \item Full transparency and control
+\end{itemize}
+\end{columns}
+
+\vspace{0.5cm}
+\begin{center}
+\fcolorbox{spyblue}{spygold!20}{\parbox{0.8\textwidth}{\centering
+\textbf{From passive investor to active shareholder}}}
+\end{center}
+\end{frame}
+
+% Slide 3: Verified Share Purchases
+\begin{frame}{Verified Share Purchases}
+\textbf{Transparency Through Technology}
+
+\vspace{0.5cm}
+
+\begin{enumerate}
+    \item \textbf{User Deposits:} Crypto deposited into SPY DAO smart contracts
+    \item \textbf{Oracle Pricing:} Custom oracle fetches real-time SPY price
+    \item \textbf{Backend Execution:} API integration purchases actual S\&P 500 shares
+    \item \textbf{Onchain Recording:} Immutable record of ownership and positions
+    \item \textbf{Copy Trading:} Mirror S\&P 500 weightings exactly
+\end{enumerate}
+
+\vspace{0.5cm}
+
+\begin{center}
+\tikz{
+    \node[draw, rounded corners, fill=spyblue!10, text width=0.9\textwidth, align=center] {
+    \textbf{Every dollar deposited = Real shares owned}\\
+    Verifiable. Transparent. Trustless.
+    };
+}
+\end{center}
+\end{frame}
+
+% Slide 4: ERC-4626 Governance
+\begin{frame}{ERC-4626 Governance}
+\textbf{Standard Vaults, Extraordinary Governance}
+
+\vspace{0.3cm}
+
+\begin{columns}
+\column{0.5\textwidth}
+\textbf{ERC-4626 Benefits:}
+\begin{itemize}
+    \item Standardized tokenized vaults
+    \item Composability with DeFi
+    \item Proportional share tracking
+    \item Seamless deposits/withdrawals
+\end{itemize}
+
+\column{0.5\textwidth}
+\textbf{Governance Layer:}
+\begin{itemize}
+    \item Voting power = vault shares
+    \item Quadratic or weighted voting
+    \item Time-locked governance tokens
+    \item Anti-whale mechanisms
+\end{itemize}
+\end{columns}
+
+\vspace{0.5cm}
+
+\begin{center}
+\fcolorbox{spyblue}{white}{\parbox{0.85\textwidth}{
+\textbf{Architecture:}\\
+\texttt{User Deposit → Mint ERC-4626 Shares → Governance Rights → Corporate Voting}
+}}
+\end{center}
+\end{frame}
+
+% Slide 5: Deposits at Internet Scale
+\begin{frame}{Deposits at Internet Scale}
+\begin{center}
+\textbf{Global, Permissionless, 24/7}
+\end{center}
+
+\vspace{0.5cm}
+
+\begin{columns}
+\column{0.5\textwidth}
+\textbf{Traditional Limitations:}
+\begin{itemize}
+    \item Bank account required
+    \item Minimum investments
+    \item Geographic restrictions
+    \item Business hours only
+    \item KYC/AML friction
+\end{itemize}
+
+\column{0.5\textwidth}
+\textbf{SPY DAO Advantages:}
+\begin{itemize}
+    \item Deposit from anywhere
+    \item Start with any amount
+    \item No intermediaries
+    \item Instant 24/7 access
+    \item Crypto-native UX
+\end{itemize}
+\end{columns}
+
+\vspace{0.5cm}
+
+\begin{center}
+\Large{\textbf{Breaking down barriers to financial participation}}
+\end{center}
+\end{frame}
+
+% Slide 6: Delegated Voting Power
+\begin{frame}{Delegated Voting Power}
+\textbf{Liquid Democracy for Corporate Governance}
+
+\vspace{0.3cm}
+
+\begin{itemize}
+    \item \textbf{Direct Democracy:} Vote yourself on every shareholder proposal
+    \item \textbf{Delegate to Experts:} Assign voting power to trusted community members
+    \item \textbf{Issue-Specific Delegation:} Different delegates for ESG, compensation, M\&A
+    \item \textbf{Revocable Anytime:} Reclaim your voting power instantly
+    \item \textbf{Transparent Voting Records:} See how delegates vote onchain
+\end{itemize}
+
+\vspace{0.5cm}
+
+\begin{center}
+\tikz{
+    \node[draw, rounded corners, fill=spygold!20, text width=0.8\textwidth, align=center] {
+    \textbf{Don't have time to research 500 companies?}\\
+    Delegate to someone who does — or become a delegate yourself
+    };
+}
+\end{center}
+\end{frame}
+
+% Slide 7: Aggregated Authority
+\begin{frame}{Aggregated Authority}
+\textbf{Collective Power Through Democratic Consensus}
+
+\vspace{0.5cm}
+
+\begin{columns}
+\column{0.6\textwidth}
+\textbf{How It Works:}
+\begin{enumerate}
+    \item Shareholder vote announced (e.g., Apple Board Election)
+    \item SPY DAO members vote within the DAO
+    \item Votes aggregated democratically
+    \item SPY DAO casts unified vote at shareholder meeting
+    \item Results published onchain
+\end{enumerate}
+
+\column{0.4\textwidth}
+\textbf{Impact:}
+\begin{itemize}
+    \item Retail investors become influential
+    \item Challenge institutional voting
+    \item Transparent voting process
+    \item Accountability
+\end{itemize}
+\end{columns}
+
+\vspace{0.3cm}
+
+\begin{center}
+\textbf{\textit{One DAO, one voice — but thousands of minds behind it}}
+\end{center}
+\end{frame}
+
+% Slide 8: Broker-Based Ownership
+\begin{frame}{Broker-Based Ownership}
+\textbf{Bridging DeFi and TradFi}
+
+\vspace{0.3cm}
+
+\begin{columns}
+\column{0.5\textwidth}
+\textbf{The Bridge:}
+\begin{itemize}
+    \item SPY DAO holds broker account
+    \item Real shares in user names (custodial)
+    \item API integration for trading
+    \item Compliance with securities law
+\end{itemize}
+
+\column{0.5\textwidth}
+\textbf{Legal Structure:}
+\begin{itemize}
+    \item Wyoming DAO LLC
+    \item Registered broker-dealer partner
+    \item FINRA compliance
+    \item Transparent fee structure
+\end{itemize}
+\end{columns}
+
+\vspace{0.5cm}
+
+\begin{center}
+\fcolorbox{spyblue}{spygold!20}{\parbox{0.85\textwidth}{\centering
+\textbf{Crypto frontend + Traditional backend = Best of both worlds}\\
+\small{Regulatory compliant yet decentralized governance}
+}}
+\end{center}
+\end{frame}
+
+% Slide 9: Earn Governance Yields
+\begin{frame}{Earn Governance Yields}
+\textbf{Get Paid for Participating}
+
+\vspace{0.3cm}
+
+\begin{columns}
+\column{0.5\textwidth}
+\textbf{Revenue Streams:}
+\begin{itemize}
+    \item Management fees (lower than TradFi)
+    \item Securities lending income
+    \item Governance participation rewards
+    \item Delegate staking yields
+\end{itemize}
+
+\column{0.5\textwidth}
+\textbf{Yield Distribution:}
+\begin{itemize}
+    \item Proportional to vault shares
+    \item Bonus for active voters
+    \item Delegate performance incentives
+    \item Protocol revenue sharing
+\end{itemize}
+\end{columns}
+
+\vspace{0.5cm}
+
+\begin{center}
+\tikz{
+    \node[draw, rounded corners, fill=spyblue!10, text width=0.85\textwidth, align=center] {
+    \Large{\textbf{Earn while you govern}}\\
+    \normalsize{Active participation = Higher returns}
+    };
+}
+\end{center}
+\end{frame}
+
+% Slide 10: Index Investing and Control
+\begin{frame}{Index Investing and Control}
+\textbf{Have Your Cake and Eat It Too}
+
+\vspace{0.5cm}
+
+\begin{center}
+\textbf{Traditional Index Investing:}
+\end{center}
+\begin{itemize}
+    \item Low fees ✓
+    \item Diversification ✓
+    \item Passive management ✓
+    \item \textcolor{red}{No control ✗}
+    \item \textcolor{red}{No governance ✗}
+\end{itemize}
+
+\vspace{0.3cm}
+
+\begin{center}
+\textbf{SPY DAO:}
+\end{center}
+\begin{itemize}
+    \item Low fees ✓
+    \item Diversification ✓
+    \item Passive management ✓
+    \item \textcolor{green!50!black}{\textbf{Democratic control ✓}}
+    \item \textcolor{green!50!black}{\textbf{Active governance ✓}}
+\end{itemize}
+\end{frame}
+
+% Slide 11: Returning Voting Rights to the People
+\begin{frame}{Returning Voting Rights to the People}
+\begin{center}
+\Large{\textbf{The Crisis of Passive Ownership}}
+\end{center}
+
+\vspace{0.5cm}
+
+\textbf{Current Reality:}
+\begin{itemize}
+    \item BlackRock, Vanguard, State Street control 25\% of S\&P 500 votes
+    \item They vote YOUR shares based on THEIR interests
+    \item Zero transparency or accountability to retail investors
+    \item Executive compensation, board elections, ESG — all decided for you
+\end{itemize}
+
+\vspace{0.3cm}
+
+\textbf{SPY DAO Solution:}
+\begin{center}
+\tikz{
+    \node[draw, rounded corners, fill=spygold!30, text width=0.85\textwidth, align=center] {
+    \Large{\textbf{Your money. Your vote. Your future.}}\\
+    \normalsize{Web3 technology enables what should have always been: \\shareholder democracy}
+    };
+}
+\end{center}
+\end{frame}
+
+% Slide 12: Permissionless Global Economic Access
+\begin{frame}{Permissionless Global Economic Access}
+\textbf{Financial Inclusion Through Decentralization}
+
+\vspace{0.3cm}
+
+\begin{columns}
+\column{0.5\textwidth}
+\textbf{Who We Serve:}
+\begin{itemize}
+    \item Unbanked populations
+    \item International investors
+    \item Small-balance savers
+    \item Privacy-conscious users
+    \item DeFi natives
+\end{itemize}
+
+\column{0.5\textwidth}
+\textbf{No Requirements:}
+\begin{itemize}
+    \item No bank account
+    \item No minimum balance
+    \item No credit check
+    \item No geographic limits
+    \item No traditional KYC
+\end{itemize}
+\end{columns}
+
+\vspace{0.5cm}
+
+\begin{center}
+\fcolorbox{spyblue}{white}{\parbox{0.9\textwidth}{\centering
+\textbf{If you can connect to the internet and hold crypto,}\\
+\textbf{you can participate in the American economy}\\
+\vspace{0.2cm}
+\textit{This is the promise of Web3}
+}}
+\end{center}
+\end{frame}
+
+% Conclusion/Call to Action
+\begin{frame}{Join the Governance Revolution}
+\begin{center}
+\LARGE{\textbf{SPY DAO}}\\
+\vspace{0.3cm}
+\large{\textit{Where Index Investing Meets Democracy}}
+\end{center}
+
+\vspace{0.5cm}
+
+\textbf{What We're Building:}
+\begin{itemize}
+    \item ERC-4626 vault contracts with governance layer
+    \item Custom oracle integration for SPY pricing
+    \item Broker API backend for real share purchases
+    \item Intuitive UI for voting on 500 companies
+    \item Delegation and liquid democracy mechanisms
+    \item Onchain vote tracking and transparency
+\end{itemize}
+
+\vspace{0.5cm}
+
+\begin{center}
+\tikz{
+    \node[draw=spyblue, line width=2pt, rounded corners, fill=spygold!40, text width=0.7\textwidth, align=center] {
+    \Large{\textbf{Rayls Hackathon 2025}}\\
+    \vspace{0.2cm}
+    \large{Let's democratize corporate America}\\
+    \vspace{0.2cm}
+    \normalsize{\textbf{Together}}
+    };
+}
+\end{center}
+\end{frame}
+
+\end{document}
