@@ -301,15 +301,26 @@ export function useVault(provider: BrowserProvider | null, address: string | nul
       
       toast({
         title: "Success",
-        description: "KYC verification completed!",
+        description: "KYC verification completed! You can now deposit/withdraw.",
       });
 
       await fetchVaultData();
     } catch (err: any) {
       console.error('Error completing KYC:', err);
+      
+      let errorMessage = "Failed to complete KYC.";
+      
+      if (err.message?.includes("AccessControl")) {
+        errorMessage = "You don't have COMPLIANCE_ROLE permissions. Only the contract admin can approve KYC.";
+      } else if (err.message?.includes("user rejected")) {
+        errorMessage = "Transaction rejected by user.";
+      } else if (err.shortMessage) {
+        errorMessage = err.shortMessage;
+      }
+      
       toast({
-        title: "Error",
-        description: err.message || "Failed to complete KYC. You may not have admin permissions.",
+        title: "KYC Approval Failed",
+        description: errorMessage,
         variant: "destructive",
       });
     }
