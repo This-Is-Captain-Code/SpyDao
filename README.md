@@ -1,32 +1,129 @@
-# SPY DAO – Democratizing Index Fund Governance
+# SPY DAO – Democratizing Index Fund Governance on Rayls
 
-An on-chain governance system that gives SPY-style index investors a structured way to coordinate how their underlying voting rights should be used, with a vault and governor that are designed from day one with compliance and risk controls in mind.
+SPY DAO is an on-chain governance system built on **Rayls** that gives SPY-style index investors a structured way to coordinate how their underlying voting rights should be used. It uses an **ERC-4626 yield-bearing vault** and a **Governor** contract designed from day one with **compliance, risk controls, and institutional workflows** in mind.
+
+## Highlights
+
+| Badge | Detail |
+| --- | --- |
+| 🏆 Built for the **Rayls Hackathon** | Rayls-native index governance prototype |
+| ✅ Category: **Use of ERC-4626 yield-bearing vaults** | Yield-bearing, governance-enabled shares |
+| ✅ Theme: **Bridging TradFi ↔ DeFi for index governance** | Compliant on-chain coordination for SPY holders |
+
+## Table of Contents
+
+- [🧭 Hackathon Framing](#-hackathon-framing)
+- [🌉 Alignment with the Rayls Vision](#-alignment-with-the-rayls-vision)
+- [🎯 Problem](#-problem)
+- [🚀 Solution](#-solution)
+- [🏗️ Architecture (MVP)](#-architecture-mvp)
+- [🧱 Compliance Considerations in the Design](#-compliance-considerations-in-the-design)
+- [🚀 Getting Started (MVP)](#-getting-started-mvp)
+- [🛠️ App Development (Frontend / Backend)](#-app-development-frontend--backend)
+- [🧪 Testing](#-testing)
+- [🔐 Security & Risk Posture (MVP)](#-security-risk-posture-mvp)
+- [🏆 Hackathon Judging Checklist](#-hackathon-judging-checklist)
+- [📄 License](#-license)
+- [🏆 Built at Rayls Hackathon](#-built-at-rayls-hackathon)
+
+---
+
+## 🧭 Hackathon Framing
+
+### Problem statement
+
+Index funds manage **trillions of dollars**, but end investors effectively surrender their governance rights to large asset managers. Ordinary SPY holders don’t vote on S&P 500 proposals; intermediaries do. This creates a massive **principal–agent problem**: the people who own the capital don’t control how it’s used, and there’s no clear, compliant path to route those governance signals on-chain.
+
+### Solution (MVP)
+
+SPY DAO is a **Rayls-native ERC-4626 vault** plus **Governor** that:
+
+- Wraps a USD-like token in an ERC-4626 vault and mints governance-enabled shares (`spDAO`).
+- Aggregates depositors’ voting weight into a single Governor that decides how to vote on **S&P 500 shareholder proposals**.
+- Rewards voting participation with stablecoin incentives.
+- Bakes in **KYC gating, sanctions checks, oracle risk controls, and supervised broker withdrawals**—so the design is compatible with institutional compliance teams from day one.
+
+### Long-term vision
+
+Over time, SPY DAO becomes the **canonical “index governance layer”** for tokenised SPY-style exposure on Rayls:
+
+- **Upstream** on Rayls **Privacy Nodes / Private Networks**, real brokerage/custody flows and tokenised SPY exposures are managed by regulated institutions.
+- **Downstream** on the **Rayls Public Chain**, SPY DAO exposes a liquid ERC-4626 governance vault, giving both institutions and DeFi users a compliant way to express governance preferences over S&P 500 proposals.
+- Governance signals can be **selectively disclosed** to brokers/custodians, aligning with Rayls’ vision of privacy-preserving, regulator-friendly infrastructure.
+
+### Business model
+
+In production, SPY DAO can generate revenue by:
+
+- Charging **basis points on AUM** in the ERC-4626 vault (management or platform fee).
+- Taking a **per-proposal or per-vote fee** from issuers, brokers, or activist campaigns that want to poll SPY holders at scale.
+- Offering **white-label SPY-style governance vaults** to asset managers on Rayls Privacy Nodes who want on-chain governance aggregation without building the plumbing themselves.
+
+---
+
+## 🌉 Alignment with the Rayls Vision
+
+SPY DAO is designed to sit natively on Rayls and align with the architecture in the litepaper:
+
+### TradFi ↔ DeFi bridge
+
+- Upstream: Real SPY positions and brokerage flows live on **Rayls Privacy Nodes / Private Networks**, where institutions tokenise and manage positions privately.
+- Downstream: SPY DAO exposes a **public ERC-4626 vault** on the **Rayls Public Chain**, aggregating governance power while respecting institutional constraints.
+
+### Privacy & selective disclosure
+
+- The MVP models synthetic SPY exposure on-chain, but the design anticipates plugging into Rayls’ privacy stack (e.g. Enygma-style private balances and ZK/TLS attestations) so that **raw holdings remain private while governance aggregates are public and auditable**.
+
+### On-chain identity & compliance
+
+- KYC and sanctions flags in the vault are a concrete implementation of **Rayls’ layered identity** approach: only approved addresses can enter/exit the vault or transfer `spDAO`, mirroring how Rayls expects regulated flows to work.
+
+### Institution-grade risk and control
+
+- Time-delayed, capped broker withdrawals, emergency accounting modes, and oracle sanity checks reflect Rayls’ focus on **institutional-grade risk management and operational controls**.
+
+### Composable DeFi primitive
+
+- As an ERC-4626 vault + Governor, SPY DAO is a **composable primitive** that other Rayls DeFi protocols can integrate (e.g. structured products, meta-vaults, or governance-based indices).
 
 ---
 
 ## 🎯 Problem
 
+### Principal-agent tension
+
 Index funds manage **trillions** in assets, but investors typically surrender their governance rights.
 
-When the S&P 500 votes on climate policies, compensation, or governance reforms, ordinary SPY holders don’t vote directly – large asset managers vote on their behalf. This creates a massive **principal–agent problem**: the people who own the capital often don’t control how it’s used.
+When the S&P 500 votes on climate policies, compensation, or governance reforms, ordinary SPY holders don’t vote directly – large asset managers vote on their behalf. This creates a massive **principal–agent problem**:
+
+### Why it matters
+
+- The people who own the capital often don’t control how it’s used.
+- Governance decisions are opaque and highly intermediated.
+- There is no standard, compliant, on-chain way to coordinate the voice of SPY-style investors, even as assets and workflows move onto Rayls.
 
 ---
 
 ## 🚀 Solution
 
-**SPY DAO** is a delegated governance vault that:
+### Delegated governance vault
 
-1. **Issues liquid shares** (`spDAO`) representing proportional SPY-style exposure via an ERC-4626 vault.  
-2. **Aggregates voting power** from all depositors into a single on-chain Governor contract.  
-3. **Democratically decides** how to vote on S&P 500 shareholder proposals.  
-4. **Rewards participation** by distributing tokens (e.g. stablecoins) to voters who show up.  
-5. **Builds in compliance & risk controls** at the contract level:  
-   - KYC gating for deposits/withdrawals.  
-   - Sanctions blocking on transfers.  
-   - Oracle sanity checks and emergency modes.  
+**SPY DAO** is a delegated governance vault built on Rayls that:
+
+1. **Issues liquid shares** (`spDAO`) representing proportional SPY-style exposure via an **ERC-4626 vault** over a USD-like token.  
+2. **Aggregates voting power** from all depositors into a single on-chain **Governor** contract.  
+3. **Democratically decides** how to vote on **S&P 500 shareholder proposals**.  
+4. **Rewards participation** by distributing tokens (e.g. stablecoins) to addresses that vote.  
+5. **Builds in compliance & risk controls** at the contract level:
+   - KYC gating for deposits/withdrawals.
+   - Sanctions blocking on transfers.
+   - Oracle sanity checks and emergency modes.
    - Time-delayed broker withdrawals with configurable limits.
 
-ZK-TLS proofs and fully trustless broker integrations are part of the **future roadmap**, not this MVP.
+### Future roadmap
+
+> 🔮 **Future roadmap**  
+> ZK-TLS proofs and fully trustless broker integrations are part of the **future roadmap**, aligned with Rayls’ privacy and auditability goals, but are intentionally out of scope for this MVP.
 
 ---
 
@@ -60,140 +157,139 @@ ZK-TLS proofs and fully trustless broker integrations are part of the **future r
 │    • Voting power = spDAO voting weight                     │
 │    • Voter reward mechanism using REWARD_TOKEN (MockUSD)    │
 └─────────────────────────────────────────────────────────────┘
-````
-
 Future extension (not in MVP code yet):
 
+### Future extension (not in MVP code yet):
+
 ```text
+text
+Copy code
 ┌─────────────────────────────────────────────────────────────┐
 │          ZK-TLS Verifier (VoteExecutionProof.sol)           │
 │  • Verifies broker API calls with zero-knowledge proofs     │
 │  • Anchors off-chain execution back on-chain                │
 └─────────────────────────────────────────────────────────────┘
 ```
+### 🧩 Core Components
+#### SPYVault.sol (ERC-4626 + Governance + Compliance)
+The main vault that wraps a USD-like token and mints governance-enabled shares (spDAO).
 
----
+##### Standards & base contracts
 
-## 🧩 Core Components
+- ERC4626 – vault over MockUSD (underlying asset).
 
-### `SPYVault.sol` (ERC-4626 + Governance + Compliance)
+- ERC20 – share token: SPY DAO Share (spDAO).
 
-The main vault that wraps a USD-like token and mints governance-enabled shares (**spDAO**).
+- ERC20Permit – gasless approvals.
 
-**Standards & base contracts**
+- ERC20Votes – snapshot-based voting power for governance.
 
-* `ERC4626` – vault over `MockUSD` (underlying asset).
-* `ERC20` – share token: **SPY DAO Share** (`spDAO`).
-* `ERC20Permit` – gasless approvals.
-* `ERC20Votes` – snapshot-based voting power for governance.
-* `AccessControl` – roles for admin, executor, and compliance.
+- AccessControl – roles for admin, executor, and compliance.
 
-**Roles**
+##### Roles
+###### DEFAULT_ADMIN_ROLE
 
-* `DEFAULT_ADMIN_ROLE`
+- Manages other roles.
 
-  * Manages other roles.
-  * Can update `maxSingleWithdrawal`.
-  * Can toggle synthetic accounting mode (`setIgnoreSynthetic`).
+- Can update maxSingleWithdrawal.
 
-* `EXECUTOR_ROLE`
+- Can toggle synthetic accounting mode (setIgnoreSynthetic).
 
-  * Updates synthetic SPY exposure (`setSyntheticHoldings`).
-  * Schedules and executes broker withdrawals.
+###### EXECUTOR_ROLE
 
-* `COMPLIANCE_ROLE`
+- Updates synthetic SPY exposure (setSyntheticHoldings).
 
-  * Manages KYC and sanctions flags.
-  * Controls global pause (`setGlobalPause`).
+- Schedules and executes broker withdrawals.
 
-**Synthetic exposure & price oracle**
+###### COMPLIANCE_ROLE
 
-* `ISPYPublicOracle` – interface with `latestAnswer() -> uint256` (SPY price, 8 decimals).
+- Manages KYC and sanctions flags.
 
-* `MockSPYOracle` – simple mock implementation for devnet with:
+- Controls global pause (setGlobalPause).
 
-  * `setPrice(uint256 newPrice)` to adjust SPY price (for testing).
+#### Synthetic exposure & price oracle
 
-* `syntheticShareBalance` – tracks how much synthetic SPY exposure the vault models (trusted).
+##### ISPYPublicOracle
 
-* `totalAssets()`:
+- Interface with `latestAnswer()` -> `uint256` (SPY price, 8 decimals).
 
-  * Always counts on-chain USD:
-    `IERC20(asset()).balanceOf(address(this))`.
-  * Tries to add synthetic value:
+##### MockSPYOracle
 
-    * Calls `spyOracle.latestAnswer()` in a `try/catch`.
-    * Rejects 0 or absurd prices (`> MAX_ORACLE_PRICE`).
-    * Computes `offChainValue = price * syntheticShareBalance / 1e8`.
-  * If `ignoreSynthetic == true` or oracle fails, `totalAssets()` falls back to on-chain USD only.
+- Mock implementation for devnet with:
+  - `setPrice(uint256 newPrice)` to adjust SPY price (for testing).
+  - `syntheticShareBalance` – tracks how much synthetic SPY exposure the vault models (trusted).
 
-This design reflects the reality that underlying SPY execution happens off-chain, but the vault needs an on-chain model of value that doesn’t break if the oracle misbehaves.
+##### totalAssets()
 
-**Broker withdrawal pipeline**
+- Always counts on-chain USD:
+  - `IERC20(asset()).balanceOf(address(this))`.
+- Tries to add synthetic value:
+  - Calls `spyOracle.latestAnswer()` in a try/catch.
+  - Rejects 0 or absurd prices (> `MAX_ORACLE_PRICE`).
+  - Computes `offChainValue = price * syntheticShareBalance / 1e8`.
+- If `ignoreSynthetic == true` or oracle fails, `totalAssets()` falls back to on-chain USD only.
 
+This reflects the reality that underlying SPY execution happens off-chain (via brokers/custodians), while the vault maintains a robust, failure-tolerant on-chain NAV model.
+
+### Broker withdrawal pipeline
 To mirror sending funds to a broker/custodian that actually buys SPY, the vault defines a controlled withdrawal flow:
 
-* `BROKER_WALLET` – broker hot wallet receiving underlying asset.
-* `WITHDRAWAL_DELAY = 2 days` – minimum delay from scheduling to execution.
-* `maxSingleWithdrawal` – per-withdrawal cap in underlying token units.
+- **BROKER_WALLET** – broker hot wallet receiving underlying asset.
+- **WITHDRAWAL_DELAY = 2 days** – minimum delay from scheduling to execution.
+- **maxSingleWithdrawal** – per-withdrawal cap in underlying token units.
 
-Flow:
+#### Flow
 
-1. **`scheduleBrokerWithdrawal(uint256 assets)`**
+##### scheduleBrokerWithdrawal(uint256 assets)
 
-   * `EXECUTOR_ROLE` only, vault not paused.
-   * Requires:
+- EXECUTOR_ROLE only, vault not paused.
+- Requires:
+  - assets <= maxSingleWithdrawal.
+  - No existing pending withdrawal.
+  - assets <= current on-chain balance.
+- Sets:
+  - pendingWithdrawalAmount = assets.
+  - pendingWithdrawalTime = block.timestamp + WITHDRAWAL_DELAY.
+- Emits ScheduledBrokerWithdrawal(amount, executeAfter).
 
-     * `assets <= maxSingleWithdrawal`.
-     * No existing pending withdrawal.
-     * `assets <= current on-chain balance`.
-   * Sets:
+##### executeBrokerWithdrawal()
 
-     * `pendingWithdrawalAmount = assets`.
-     * `pendingWithdrawalTime = block.timestamp + WITHDRAWAL_DELAY`.
-   * Emits `ScheduledBrokerWithdrawal(amount, executeAfter)`.
+- EXECUTOR_ROLE only, vault not paused.
+- Requires:
+  - block.timestamp >= pendingWithdrawalTime.
+  - pendingWithdrawalAmount > 0.
+  - Vault still has enough balance at execution.
+- Transfers underlying to BROKER_WALLET.
+- Clears pending state.
+- Emits ExecutedBrokerWithdrawal(amount, brokerWallet).
 
-2. **`executeBrokerWithdrawal()`**
+##### cancelWithdrawal()
 
-   * `EXECUTOR_ROLE` only, vault not paused.
-   * Requires:
+- DEFAULT_ADMIN_ROLE only.
+- Clears pending state.
+- Emits CancelledBrokerWithdrawal().
 
-     * `block.timestamp >= pendingWithdrawalTime`.
-     * `pendingWithdrawalAmount > 0`.
-     * Vault still has enough balance at execution.
-   * Transfers underlying to `BROKER_WALLET`.
-   * Clears pending state.
-   * Emits `ExecutedBrokerWithdrawal(amount, brokerWallet)`.
+This makes withdrawals to the broker visible, delayed, capped, and cancellable, in line with how institutional flows are supervised.
 
-3. **`cancelWithdrawal()`**
-
-   * `DEFAULT_ADMIN_ROLE` only.
-   * Clears pending state.
-   * Emits `CancelledBrokerWithdrawal()`.
-
-This makes withdrawals to the broker **visible, delayed, capped, and cancellable**, instead of arbitrary pushes.
-
----
-
-### `SPYDAOGovernor.sol` (Governor + Voting Rewards)
-
+### SPYDAOGovernor.sol (Governor + Voting Rewards)
 The Governor coordinates how SPY DAO votes on S&P 500 shareholder proposals and rewards participation.
 
-**Base contracts**
+#### Base contracts
 
-* `Governor`
-* `GovernorCountingSimple`
-* `GovernorVotes` (uses `spDAO` as voting token)
+- Governor
+- GovernorCountingSimple
+- GovernorVotes (uses spDAO as voting token)
 
-**Parameters**
+#### Parameters
 
-* `VOTING_DELAY = 1` block.
-* `VOTING_PERIOD = 45_000` blocks (~1 week on Rayls, depending on block time).
-* `QUORUM = 10 * 1e18` (10 spDAO, assuming 18-decimals share token).
+- VOTING_DELAY = 1 block.
+- VOTING_PERIOD = 45_000 blocks (~1 week on Rayls devnet, depending on block time).
+- QUORUM = 10 * 1e18 (10 spDAO, assuming 18-decimals share token).
 
-**Proposal metadata**
+#### Proposal metadata
 
-```solidity
+solidity
+Copy code
 struct SP500Proposal {
     string companyTicker;          // e.g. "AAPL"
     uint256 shareholderProposalId; // from Broadridge / Say / etc.
@@ -201,35 +297,38 @@ struct SP500Proposal {
     uint256 totalVotes;            // total voting weight participating
     bool executed;                 // set on Governor execution
 }
-```
+mapping(uint256 => SP500Proposal) public sp500Proposals;
 
-* `mapping(uint256 => SP500Proposal) public sp500Proposals;`
-* `mapping(uint256 => mapping(address => bool)) public hasClaimedReward;`
+mapping(uint256 => mapping(address => bool)) public hasClaimedReward;
 
-**Creating an S&P 500 vote**
+#### Creating an S&P 500 vote
 
-```solidity
+solidity
+Copy code
 function proposeSP500Vote(
     string memory companyTicker,
     uint256 shareholderProposalId,
     bool voteFor,
     string memory description
 ) external returns (uint256)
-```
+Creates an advisory proposal (no on-chain side effects).
 
-* Creates an advisory proposal (no on-chain side effects).
-* Stores metadata in `sp500Proposals[proposalId]`.
-* Underlying Governor mechanics handle voting windows and states.
+Stores metadata in sp500Proposals[proposalId].
 
-**Voting & tracking participation**
+Underlying Governor mechanics handle voting windows and states.
 
-Overrides `_castVote` to track participation:
+#### Voting & tracking participation
 
-* Calls parent `_castVote` to record the vote.
-* Increments `proposal.totalVotes` by the voter’s weight.
-* Emits:
+Overrides _castVote to track participation:
 
-```solidity
+Calls parent _castVote to record the vote.
+
+Increments proposal.totalVotes by the voter’s weight.
+
+Emits:
+
+solidity
+Copy code
 SP500VoteCast(
     proposalId,
     proposal.companyTicker,
@@ -237,170 +336,157 @@ SP500VoteCast(
     account,
     votes
 );
-```
+#### Reward token & economics
+IERC20 public immutable REWARD_TOKEN;
 
-**Reward token & economics**
+In the MVP, this is the MockUSD token.
 
-* `IERC20 public immutable REWARD_TOKEN;`
-
-  * In the MVP, this is the **MockUSD** token.
-
-* `REWARD_PER_VOTE = 1e16` (0.01 units per 1e18 voting weight).
+REWARD_PER_VOTE = 1e16 (0.01 units per 1e18 voting weight).
 
 Rewards are linear in voting weight:
 
-```solidity
+solidity
+Copy code
 reward = (votingWeight * REWARD_PER_VOTE) / 1e18;
-```
+#### Claiming rewards
 
-**Claiming rewards**
-
-```solidity
+solidity
+Copy code
 function claimRewards(uint256 proposalId) external
-```
-
 Checks:
 
-* Voting period has ended.
-* Caller hasn’t already claimed for this proposal.
-* There were votes (`proposal.totalVotes > 0`).
-* Caller had voting power at the proposal snapshot (via `getVotes`).
+Voting period has ended.
+
+Caller hasn’t already claimed for this proposal.
+
+There were votes (proposal.totalVotes > 0).
+
+Caller had voting power at the proposal snapshot (via getVotes).
 
 If all checks pass:
 
-* Transfers reward from Governor to caller.
-* Increments `totalRewardsDistributed`.
-* Marks `hasClaimedReward[proposalId][msg.sender] = true`.
-* Emits `RewardsClaimed(proposalId, voter, reward)`.
+Transfers reward from Governor to caller.
 
-**Funding the reward pool**
+Increments totalRewardsDistributed.
 
-```solidity
+Marks hasClaimedReward[proposalId][msg.sender] = true.
+
+Emits RewardsClaimed(proposalId, voter, reward).
+
+#### Funding the reward pool
+
+solidity
+Copy code
 function distributeRewards(uint256 amount) external {
     REWARD_TOKEN.safeTransferFrom(msg.sender, address(this), amount);
 }
-```
+Anyone can fund future rewards by transferring MockUSD into the Governor.
 
-Anyone can fund future rewards by transferring `MockUSD` into the Governor.
-
----
-
-### `MockUSD.sol`
-
+### MockUSD.sol
 A minimal mock stablecoin used for both:
 
-* Vault underlying.
-* Governance rewards.
+- Vault underlying.
+- Governance rewards.
 
-**Features**
+#### Features
 
-* Name: **Mock USD**, symbol: **mUSD**.
-* `decimals() = 6`.
-* Mints **1,000,000 mUSD** to deployer on construction.
-* `mint(address to, uint256 amount)` – unrestricted mint (testing only).
-* `faucet()` – mints **1,000 mUSD** to caller for easy local testing.
+- Name: Mock USD, symbol: mUSD.
+- decimals() = 6.
+- Mints 1,000,000 mUSD to deployer on construction.
+- `mint(address to, uint256 amount)` – unrestricted mint (testing only).
+- `faucet()` – mints 1,000 mUSD to caller for easy devnet testing.
 
----
+### ISPYPublicOracle.sol & MockSPYOracle.sol
+#### ISPYPublicOracle
 
-### `ISPYPublicOracle.sol` & `MockSPYOracle.sol`
+- Interface with:
 
-* `ISPYPublicOracle` – interface with:
+solidity
+Copy code
+function latestAnswer() external view returns (uint256);
+#### MockSPYOracle
 
-  ```solidity
-  function latestAnswer() external view returns (uint256);
-  ```
-
-* `MockSPYOracle` – simple mock implementation with:
-
-  * `_price` stored internally (8 decimals).
-  * `latestAnswer()` returning `_price`.
-  * `setPrice(uint256 newPrice)` to adjust price (open to anyone in this MVP).
-  * `PriceUpdated(oldPrice, newPrice)` event for observability.
-
----
+- Simple mock implementation with:
+  - _price stored internally (8 decimals).
+  - latestAnswer() returning _price.
+  - `setPrice(uint256 newPrice)` to adjust price (open to anyone in this MVP).
+  - `PriceUpdated(oldPrice, newPrice)` event for observability.
 
 ## 🧱 Compliance Considerations in the Design
+The contracts are intentionally structured to be compatible with a more regulated environment and with Rayls’ compliance-first vision:
 
-The contracts are intentionally structured to be compatible with a more regulated environment:
+### KYC gating on capital flows
 
-1. **KYC gating on capital flows**
+- All deposit, mint, withdraw, redeem operations require:
+  - `isKYCCompleted[account] == true` for caller, receiver, and owner (where applicable).
+- KYC flags managed by `COMPLIANCE_ROLE` via `setComplianceStatus`.
 
-   * All `deposit`, `mint`, `withdraw`, `redeem` operations require:
+### Sanctions / block lists
 
-     * `isKYCCompleted[account] == true` for caller, receiver, and owner (where applicable).
-   * KYC flags managed by `COMPLIANCE_ROLE` via `setComplianceStatus`.
+- `isSanctionsBlocked[account]` prevents:
+  - Vault entry/exit via deposit/withdraw/redeem.
+  - Transfers of `spDAO` tokens in `_update` (both from and to).
+- This mirrors Rayls’ expectation that sanctioned or high-risk addresses can be blocked at the protocol level.
 
-2. **Sanctions / block lists**
+### Global pause switch
 
-   * `isSanctionsBlocked[account]` prevents:
+- `globalPause` can be toggled by `COMPLIANCE_ROLE`.
+- When true, all deposit/mint/withdraw/redeem operations revert.
+- Provides a circuit breaker for regulatory or technical incidents.
 
-     * Vault entry/exit via deposit/withdraw/redeem.
-     * Transfers of spDAO tokens in `_update` (both `from` and `to`).
-   * This allows implementing sanctions lists, fraud blocks, and off-chain compliance screening.
+### Oracle risk controls
 
-3. **Global pause switch**
+- `totalAssets()` uses a try/catch around `spyOracle.latestAnswer()`.
+- Discards zero or out-of-bound prices (> `MAX_ORACLE_PRICE`).
+- If the oracle fails or misbehaves, the vault falls back to on-chain USD only, instead of breaking NAV.
 
-   * `globalPause` can be toggled by `COMPLIANCE_ROLE`.
-   * When `true`, all deposit/mint/withdraw/redeem operations revert.
-   * Gives a clear “circuit breaker” in case of regulatory or technical incidents.
+### Emergency accounting mode
 
-4. **Oracle risk controls**
+- Admin can call `setIgnoreSynthetic(true)` to:
+  - Treat synthetic SPY exposure as zero.
+- Only use on-chain USD for NAV until the off-chain side is stable again.
 
-   * `totalAssets()` uses a `try/catch` around `spyOracle.latestAnswer()`.
-   * Discards zero or out-of-bound prices (`> MAX_ORACLE_PRICE`).
-   * If the oracle fails or misbehaves, the vault falls back to on-chain USD only, instead of exploding NAV.
 
-5. **Emergency accounting mode**
+### Supervised broker withdrawals
 
-   * Admin can call `setIgnoreSynthetic(true)` to tell the vault:
+- Withdrawals to the broker are:
+  - Delayed (2-day minimum).
+  - Capped per withdrawal (maxSingleWithdrawal).
+  - Visible via events.
+  - Cancellable by admin.
+- This matches how traditional SPY flows would be supervised by risk and compliance.
 
-     * Treat synthetic SPY exposure as zero.
-     * Only use on-chain USD for NAV until things are stable again.
+### Auditability
 
-6. **Supervised broker withdrawals**
-
-   * Withdrawals to the broker are:
-
-     * **Delayed** (2-day minimum).
-     * **Capped** per withdrawal (`maxSingleWithdrawal`).
-     * **Visible** via events.
-     * **Cancellable** by admin.
-   * This aligns with a world where regulated custodians and brokers are involved, and large flows shouldn’t be instantaneous or invisible.
-
-7. **Auditability**
-
-   * Key actions emit structured events:
-
-     * `ComplianceStatusUpdated`
-     * `GlobalPauseSet`
-     * `SyntheticHoldingsUpdated`
-     * `SyntheticAccountingModeSet`
-     * `ScheduledBrokerWithdrawal` / `ExecutedBrokerWithdrawal` / `CancelledBrokerWithdrawal`
-     * `SP500VoteCast`, `ProposalExecuted`, `RewardsClaimed`
-   * These make it easier to build dashboards and off-chain audit trails.
-
----
+- Key actions emit structured events:
+  - ComplianceStatusUpdated
+  - GlobalPauseSet
+  - SyntheticHoldingsUpdated
+  - SyntheticAccountingModeSet
+  - ScheduledBrokerWithdrawal / ExecutedBrokerWithdrawal / CancelledBrokerWithdrawal
+  - SP500VoteCast, ProposalExecuted, RewardsClaimed
+- These can feed Rayls-native monitoring, reporting, and regulatory dashboards.
 
 ## 🚀 Getting Started (MVP)
-
 ### Prerequisites
 
-* Node.js **18+**
-* `npm`
-* Access to **Rayls Devnet RPC**
-* A funded Rayls Devnet account (private key) for deployment
+- Node.js 18+
+- npm
+- Access to Rayls Devnet RPC
+- A funded Rayls Devnet account (private key) for deployment
 
 ### 1. Clone & install
+
+Use `bash` and **Copy code** to run:
 
 ```bash
 git clone <repository-url>
 cd SpyDao
 npm install
 ```
-
 ### 2. Configure environment
 
-Create a `.env` file in the project root:
+Create a `.env` file in the project root. Use `bash` and **Copy code** to populate it:
 
 ```bash
 PRIVATE_KEY=0xYOUR_PRIVATE_KEY   # Deployer key (Rayls devnet)
@@ -408,9 +494,11 @@ RAYLS_RPC=https://devnet-rpc.rayls.com
 PUBLIC_KEY=0xYourPublicAddress   # (optional, informational)
 ```
 
-Make sure `.env` is in `.gitignore` (it already is in this repo).
+Ensure `.env` is in `.gitignore` (it already is in this repo).
 
 ### 3. Compile contracts
+
+Use `bash` and **Copy code** to compile:
 
 ```bash
 npx hardhat compile
@@ -418,15 +506,15 @@ npx hardhat compile
 
 This compiles:
 
-* `SPYVault`
-* `SPYDAOGovernor`
-* `MockUSD`
-* `MockSPYOracle`
-* `ISPYPublicOracle` interface
+- SPYVault
+- SPYDAOGovernor
+- MockUSD
+- MockSPYOracle
+- ISPYPublicOracle interface
 
 ### 4. Deploy to Rayls Devnet
 
-Use the provided Hardhat deployment script:
+Use the provided Hardhat deployment script. Use `bash` and **Copy code**:
 
 ```bash
 npx hardhat run scripts/deploy.js --network rayls
@@ -434,32 +522,29 @@ npx hardhat run scripts/deploy.js --network rayls
 
 The script will:
 
-1. Deploy `MockUSD`.
-2. Deploy `MockSPYOracle` with an initial SPY price.
-3. Deploy `SPYVault`, wired to:
+- Deploy MockUSD.
+- Deploy MockSPYOracle with an initial SPY price.
+- Deploy SPYVault, wired to:
+  - MockUSD as underlying asset.
+  - MockSPYOracle as oracle.
+  - Deployer as EXECUTOR_ROLE, BROKER_WALLET, and initial COMPLIANCE_ROLE.
+- Deploy SPYDAOGovernor, wired to:
+  - SPYVault as voting token.
+  - MockUSD as REWARD_TOKEN.
 
-   * `MockUSD` as underlying asset.
-   * `MockSPYOracle` as oracle.
-   * Deployer as `EXECUTOR_ROLE`, `BROKER_WALLET`, and initial `COMPLIANCE_ROLE`.
-4. Deploy `SPYDAOGovernor`, wired to:
+### Deployed addresses (Rayls Devnet)
 
-   * `SPYVault` as voting token.
-   * `MockUSD` as `REWARD_TOKEN`.
+| Entity | Address | Explorer Link |
+| --- | --- | --- |
+| Deployer | 0xaFEf2f5626961ba219Cd9Eb1D7A1f1B08896DD08 | |
+| MockUSD | 0xB6c7B1ef0947596FC2d8eBE577b97f34cBBD2Fb1 | https://devnet-explorer.rayls.com/address/0xB6c7B1ef0947596FC2d8eBE577b97f34cBBD2Fb1 |
+| MockSPYOracle | 0x19a881AF139D665bD857Aedf6EDcBc0dBee52765 | https://devnet-explorer.rayls.com/address/0x19a881AF139D665bD857Aedf6EDcBc0dBee52765 |
+| SPYVault | 0x2181BaAAb16e8a4E08c7fFAB8DA1780B53eD05D2 | https://devnet-explorer.rayls.com/address/0x2181BaAAb16e8a4E08c7fFAB8DA1780B53eD05D2 |
+| SPYDAOGovernor | 0x4DD81784392EC93a7e88e190Baca21EfF486895D | https://devnet-explorer.rayls.com/address/0x4DD81784392EC93a7e88e190Baca21EfF486895D |
 
----
+### Deployed addresses (for frontend)
 
-### Deployed Addresses (Rayls Devnet)
-
-Deployer: `0xaFEf2f5626961ba219Cd9Eb1D7A1f1B08896DD08`
-
-| Contract       | Address                                      | Explorer Link                                                                                                                                                                |
-| -------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| MockUSD        | `0xB6c7B1ef0947596FC2d8eBE577b97f34cBBD2Fb1` | [https://devnet-explorer.rayls.com/address/0xB6c7B1ef0947596FC2d8eBE577b97f34cBBD2Fb1](https://devnet-explorer.rayls.com/address/0xB6c7B1ef0947596FC2d8eBE577b97f34cBBD2Fb1) |
-| MockSPYOracle  | `0x19a881AF139D665bD857Aedf6EDcBc0dBee52765` | [https://devnet-explorer.rayls.com/address/0x19a881AF139D665bD857Aedf6EDcBc0dBee52765](https://devnet-explorer.rayls.com/address/0x19a881AF139D665bD857Aedf6EDcBc0dBee52765) |
-| SPYVault       | `0x2181BaAAb16e8a4E08c7fFAB8DA1780B53eD05D2` | [https://devnet-explorer.rayls.com/address/0x2181BaAAb16e8a4E08c7fFAB8DA1780B53eD05D2](https://devnet-explorer.rayls.com/address/0x2181BaAAb16e8a4E08c7fFAB8DA1780B53eD05D2) |
-| SPYDAOGovernor | `0x4DD81784392EC93a7e88e190Baca21EfF486895D` | [https://devnet-explorer.rayls.com/address/0x4DD81784392EC93a7e88e190Baca21EfF486895D](https://devnet-explorer.rayls.com/address/0x4DD81784392EC93a7e88e190Baca21EfF486895D) |
-
-#### Deployed addresses (for frontend)
+Use **Copy code** for:
 
 ```json
 {
@@ -471,56 +556,58 @@ Deployer: `0xaFEf2f5626961ba219Cd9Eb1D7A1f1B08896DD08`
   "SPYDAOGovernor": "0x4DD81784392EC93a7e88e190Baca21EfF486895D"
 }
 ```
-
----
-
 ## 🛠️ App Development (Frontend / Backend)
-
 The repo is a full-stack Rayls app.
 
 ### Scripts
 
-* `npm run dev` – Start dev server (frontend + backend).
-* `npm run build` – Build for production.
-* `npm run start` – Run production build.
-* `npm run check` – TypeScript type checking.
-* `npm run db:push` – Apply Drizzle schema changes.
+- `npm run dev` – Start dev server (frontend + backend).
+- `npm run build` – Build for production.
+- `npm run start` – Run production build.
+- `npm run check` – TypeScript type checking.
+- `npm run db:push` – Apply Drizzle schema changes.
 
 ### Tech Stack
 
-**Frontend**
+#### Frontend
 
-* React 18 + TypeScript
-* Vite
-* Tailwind CSS
-* Radix UI
-* Wouter
-* TanStack Query
-* Framer Motion
+- React 18 + TypeScript
+- Vite
+- Tailwind CSS
+- Radix UI
+- Wouter
+- TanStack Query
+- Framer Motion
 
-**Backend**
+#### Backend
 
-* Node.js + Express
-* TypeScript
-* Drizzle ORM
-* Neon/Postgres
-* WebSocket for real-time updates
+- Node.js + Express
+- TypeScript
+- Drizzle ORM
+- Neon/Postgres
+- WebSocket for real-time updates
 
-**Smart Contracts**
+Smart Contracts
 
-* Solidity `^0.8.20`
-* Hardhat
-* OpenZeppelin contracts
-* Deployed on Rayls Devnet
+Solidity ^0.8.20
 
-**Integration**
+Hardhat
 
-* Ethers.js for contract calls from the app.
-* (Future) Broker APIs + ZK-TLS verification.
+OpenZeppelin contracts
+
+Deployed on Rayls Devnet
+
+Integration
+
+Ethers.js for contract calls from the app.
+
+(Future) Broker APIs + ZK-TLS verification.
 
 ### Project Structure (high level)
 
 ```text
+text
+Copy code
 SpyDao/
 ├── server/                # Express backend
 │   ├── db/                # Drizzle schema and migrations
@@ -540,11 +627,10 @@ SpyDao/
 └── scripts/               # Hardhat deploy scripts
 ```
 
----
-
 ## 🧪 Testing
-
 ### Smart contracts
+
+Use `bash` and **Copy code**:
 
 ```bash
 npx hardhat test
@@ -556,53 +642,71 @@ npx hardhat test
 
 If/when app tests are configured:
 
+Use `bash` and **Copy code**:
+
 ```bash
 npm test         # unit/integration tests
 npm run test:e2e # end-to-end tests (if added)
 ```
-
----
-
 ## 🔐 Security & Risk Posture (MVP)
+This MVP attempts to be honest about the trust model while still being hackathon-stage code:
 
-This MVP attempts to be **honest** about the trust model while still being hackathon-stage code:
+### Access Control
 
-* **Access Control**
+- Role-based permissions for admin, executor, and compliance operations.
+- Executor and admin are powerful; users must currently trust them not to mismanage synthetic exposure or broker withdrawals.
 
-  * Role-based permissions for admin, executor, and compliance operations.
-  * Executor and admin are powerful; users must currently trust them not to mismanage synthetic exposure or broker withdrawals.
+### Compliance-aware flows
 
-* **Compliance-aware flows**
+- KYC gating and sanctions blocking integrated into vault entry/exit and token transfers.
+- Global pause switch for operational or regulatory incidents.
 
-  * KYC gating and sanctions blocking integrated into vault entry/exit and token transfers.
-  * Global pause switch for operational or regulatory incidents.
+### Oracle & synthetic exposure
 
-* **Oracle & synthetic exposure**
+- Oracle responses are sanity-checked and wrapped in try/catch.
+- Hard cap on acceptable prices.
+- Emergency mode to ignore synthetic exposure and fall back to on-chain balances.
 
-  * Oracle responses are sanity-checked and wrapped in `try/catch`.
-  * Hard cap on acceptable prices.
-  * Emergency mode to ignore synthetic exposure and fall back to on-chain balances.
+### Broker risk
 
-* **Broker risk**
+- Withdrawals to broker are delayed, capped, cancellable, and observable via events.
+- No arbitrary “drain” function; the pipeline is explicit.
 
-  * Withdrawals to broker are delayed, capped, cancellable, and observable via events.
-  * No arbitrary “drain” function; the pipeline is explicit.
+### Governance rewards
 
-* **Governance rewards**
-
-  * Reward logic is transparent and linear in voting weight.
-  * Rewards must be explicitly funded via `distributeRewards`.
+- Reward logic is transparent and linear in voting weight.
+- Rewards must be explicitly funded via `distributeRewards`.
 
 For production, this would need additional work (multi-sig governance, richer oracle infrastructure, off-chain monitoring, formal review, etc.), but the MVP contracts are structured so those layers can be added without rewriting from scratch.
 
----
+## 🏆 Hackathon Judging Checklist
+### Deliverables
+
+- Working prototype built during the hackathon
+- ERC-4626 vault (SPYVault) deployed on Rayls devnet.
+- Governance contract (SPYDAOGovernor) wired to spDAO and MockUSD.
+- End-to-end flow: faucet → deposit → receive spDAO → vote on SP500 proposals → claim rewards.
+
+### Problem statement
+
+- Clear articulation of the principal–agent problem in index fund governance and the lack of a compliant, on-chain coordination mechanism for SPY-style investors.
+
+### Long-term vision
+
+- SPY DAO as the standard governance layer for tokenised index exposure on Rayls, integrating Privacy Nodes, Private Networks, and the Public Chain in one coherent flow.
+
+### Business model
+
+- Revenue options via AUM fees, proposal/vote sponsorship, and white-label governance vaults for asset managers building on Rayls.
+
+### Alignment with the Rayls vision
+
+- Built natively for Rayls devnet.
+- Designed around privacy, identity, compliance, and institutional workflows.
+- ERC-4626-based, composable primitive that bridges TradFi index exposure ↔ DeFi governance.
 
 ## 📄 License
-
-MIT – see `LICENSE`.
-
----
+MIT – see LICENSE.
 
 ## 🏆 Built at Rayls Hackathon
-
-SPY DAO was built for the Rayls Hackathon as a prototype for bringing real-world index fund governance on-chain, with a focus on practical compliance constraints and user-aligned voting mechanisms rather than purely theoretical token voting.
+SPY DAO was built for the Rayls Hackathon as a prototype for bringing real-world index fund governance on-chain, with a focus on practical compliance constraints, institution-friendly risk controls, and user-aligned voting mechanisms rather than purely theoretical token voting.

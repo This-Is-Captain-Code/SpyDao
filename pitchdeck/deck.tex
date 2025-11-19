@@ -43,7 +43,7 @@
 
 % Title information
 \title{\textbf{SPY DAO}}
-\subtitle{Democratizing Corporate Governance for Index Investors}
+\subtitle{ERC-4626 vault for index investors on Rayls}
 \author{Built for Rayls Hackathon}
 \date{\today}
 
@@ -58,10 +58,7 @@
     {\Huge\textcolor{white}{\textbf{SPY DAO}}}
     
     \vspace{0.5cm}
-    {\Large\textcolor{accentgold}{Democratizing Corporate Governance}}
-    
-    \vspace{0.3cm}
-    {\large\textcolor{white}{for Index Investors}}
+    {\Large\textcolor{accentgold}{ERC-4626 vault for index investors on Rayls}}
     
     \vspace{1.5cm}
     \begin{tikzpicture}
@@ -75,25 +72,29 @@
 \end{frame}
 }
 
-% Slide 1: Unlocking Trillions
+% Slide: Unlocking Trillions
 \begin{frame}{Unlocking Trillions}
 \vspace{0.5cm}
 \begin{center}
     \begin{tikzpicture}
-        \node[circle,fill=lightblue,text=white,minimum size=4.5cm] at (0,0) {
-            \begin{minipage}{4cm}
+        % Circle background
+        \node[circle,fill=lightblue,inner sep=0pt,minimum size=5cm] (c) at (0,0) {};
+
+        % Centered text inside circle
+        \node[text=white] at (c.center) {%
+            \begin{minipage}{4.5cm}
                 \centering
-                {\fontsize{50}{60}\selectfont\$55T}\\[0.3cm]
-                {\Large in index funds}
+                {\fontsize{48}{52}\selectfont \$55T\,+}\\[0.25cm]
+                {\large in global index funds}
             \end{minipage}
         };
     \end{tikzpicture}
     
     \vspace{1cm}
-    {\Large\textcolor{mainblue}{\textbf{Zero voting power}}}
+    {\Large\textcolor{mainblue}{\textbf{Retail holders have almost no direct voice}}}
     
     \vspace{0.5cm}
-    {\large Unlock corporate influence at scale}
+    {\large Trillions in passive capital, no coordinated  layer}
 \end{center}
 \end{frame}
 
@@ -159,7 +160,7 @@
 \end{center}
 \end{frame}
 
-% Slide 4: ERC-4626 Governance
+% Slide 4: ERC-4626 
 \begin{frame}{ERC-4626 Governance}
 \vspace{0.5cm}
 \begin{center}
@@ -243,7 +244,7 @@
         \draw[fill=lightblue!30,draw=mainblue,ultra thick] (-4,0) rectangle (4,2);
         \node[mainblue] at (0,1) {\LARGE Collective Bargaining};
         
-        \draw[fill=accentgold,draw=mainblue,ultra thick] (-3,-1.5) rectangle (3,-0.5);
+        \draw[fill=accentgold,draw=mainblue,ultra thick] (-4,-1.5) rectangle (4,-0.5);
         \node[white] at (0,-1) {\Large Corporate Boardrooms Listen};
     \end{tikzpicture}
     
@@ -275,14 +276,14 @@
 \end{center}
 \end{frame}
 
-% Slide 9: Earn Governance Yields
-\begin{frame}{Earn Governance Yields}
+% Slide 9: Earn Governance Rewards
+\begin{frame}{Earn Governance Rewards}
 \vspace{0.5cm}
 \begin{center}
     \begin{tikzpicture}
         % Stack of benefits
         \node[rectangle,fill=lightblue,text=white,minimum width=8cm,minimum height=1.2cm,rounded corners] at (0,2) {
-            \Large\faChartLine\ SPY Market Returns
+            \Large\faChartLine\ SPY Market Dividends
         };
         
         \node[rectangle,fill=accentgold,text=white,minimum width=8cm,minimum height=1.2cm,rounded corners] at (0,0.5) {
@@ -350,35 +351,56 @@
 \end{center}
 \end{frame}
 
-% Slide 12: Compliant Global Economic Access
+% Slide: Compliant Global Economic Access
 \begin{frame}{Compliant Global Economic Access}
 \vspace{0.5cm}
 \begin{center}
-    \begin{tikzpicture}
-        % World map style representation
-        \foreach \x in {-4,-2,0,2,4} {
-            \foreach \y in {-1,0,1} {
-                \fill[lightblue,opacity=0.7] (\x,\y) circle (0.3cm);
-            }
-        }
+    \begin{tikzpicture}[>=stealth]
+
+        % Nodes
+        \node[rectangle,fill=lightblue,text=white,
+              minimum width=3cm,minimum height=1.2cm,
+              rounded corners] (user) at (-4,0) {
+            \Large\faUser\ User
+        };
         
-        % Central node
-        \node[circle,fill=accentgold,text=white,minimum size=2.5cm] at (0,0) {
-            \begin{minipage}{2.2cm}
+        \node[rectangle,fill=accentgold,text=white,
+              minimum width=3.5cm,minimum height=1.2cm,
+              rounded corners] (kyc) at (0,0) {
+            \Large\faIdCard\ KYC \& Screening
+        };
+        
+        \node[rectangle,fill=mainblue,text=white,
+              minimum width=3cm,minimum height=1.2cm,
+              rounded corners] (vault) at (5,0) {
+            \Large\faCheckCircle\ Vault Access
+        };
+
+        % Arrows
+        \draw[->,ultra thick,mainblue] (user.east) -- (kyc.west);
+        \draw[->,ultra thick,mainblue] (kyc.east) -- (vault.west);
+        
+        % Controls box
+        \node[rectangle,fill=lightblue!30,draw=mainblue,thick,
+              minimum width=10cm,minimum height=2cm,
+              rounded corners] at (0.5,-2.5) {
+            \begin{minipage}{9cm}
                 \centering
-                \Large\textbf{Secure}\\
-                \Large\textbf{Compliant}
+                \textcolor{mainblue}{\textbf{Rayls-Aligned Controls}}\\[0.2cm]
+                \textcolor{darkgray}{KYC + sanctions gating • Global pause (circuit breaker)\\
+                Oracle sanity checks • Time-delayed, capped broker withdrawals}
             \end{minipage}
         };
     \end{tikzpicture}
     
     \vspace{0.8cm}
-    {\Large\textbf{Financial inclusion meets corporate governance}}
+    {\Large\textbf{DeFi UX with institution-grade safeguards}}
     
     \vspace{0.3cm}
-    {\large Regulation-friendly global access}
+    {\large Governance signals risk \& compliance teams can live with}
 \end{center}
 \end{frame}
+
 
 % Call to Action Slide
 {

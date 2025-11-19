@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { Home, Coins, Vote } from 'lucide-react';
+import { Home, Coins, Vote, Shield } from 'lucide-react';
 
 export function DAppHeader() {
   const [location] = useLocation();
@@ -40,6 +40,16 @@ export function DAppHeader() {
               >
                 <Vote className="mr-2 h-4 w-4" />
                 Governance
+              </Button>
+            </Link>
+            <Link href="/admin">
+              <Button
+                variant={location === '/admin' ? 'default' : 'ghost'}
+                size="sm"
+                data-testid="nav-admin"
+              >
+                <Shield className="mr-2 h-4 w-4" />
+                Admin
               </Button>
             </Link>
             <Link href="/">

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { BrowserProvider } from 'ethers';
+import { BrowserProvider, id, AbiCoder } from 'ethers';
 import { useContracts, useContractsWithSigner, formatToken } from './use-contracts';
 import { useToast } from './use-toast';
 import { ProposalState, VoteSupport, getProposalStateName } from '@/lib/contracts';
@@ -19,6 +19,14 @@ export interface SP500Proposal {
   hasVoted: boolean;
   availableReward: string;
   hasClaimed: boolean;
+  description: string; // Store the original description for execution
+}
+
+interface GovernanceConfig {
+  votingDelay: string;
+  votingPeriod: string;
+  quorum: string;
+  proposalThreshold: string;
 }
 
 export function useGovernance(provider: BrowserProvider | null, address: string | null) {
@@ -27,6 +35,7 @@ export function useGovernance(provider: BrowserProvider | null, address: string 
   const [error, setError] = useState<string | null>(null);
   const [totalRewards, setTotalRewards] = useState<string>('0');
   const [rewardPerVote, setRewardPerVote] = useState<string>('0');
+  const [config, setConfig] = useState<GovernanceConfig | null>(null);
   const contracts = useContracts(provider);
   const contractsWithSigner = useContractsWithSigner(provider, address);
   const { toast } = useToast();
@@ -41,22 +50,38 @@ export function useGovernance(provider: BrowserProvider | null, address: string 
     setError(null);
 
     try {
-      // Fetch governance constants
-      const [totalRewardsDistributed, rewardPerVote] = await Promise.all([
+      // Fetch governance constants and config
+      const [totalRewardsDistributed, rewardPerVoteRaw, votingDelay, votingPeriod, quorum, proposalThreshold] = await Promise.all([
         contracts.governor.totalRewardsDistributed(),
         contracts.governor.REWARD_PER_VOTE(),
+        contracts.governor.VOTING_DELAY(),
+        contracts.governor.VOTING_PERIOD(),
+        contracts.governor.QUORUM(),
+        contracts.governor.proposalThreshold(),
       ]);
 
       setTotalRewards(formatToken(totalRewardsDistributed, 6));
-      setRewardPerVote(formatToken(rewardPerVote, 6));
+      setRewardPerVote(formatToken(rewardPerVoteRaw, 6));
+      
+      setConfig({
+        votingDelay: votingDelay.toString(),
+        votingPeriod: votingPeriod.toString(),
+        quorum: formatToken(quorum, 18),
+        proposalThreshold: formatToken(proposalThreshold, 18),
+      });
 
       // For hackathon, we'll listen to events to get proposals
       // In production, you'd want to use a subgraph or indexer
       const filter = contracts.governor.filters.ProposalCreated();
-      const events = await contracts.governor.queryFilter(filter, -10000); // Last 10000 blocks
+      // Query recent blocks - use current block minus a reasonable range
+      const currentBlock = await contracts.governor.runner!.provider!.getBlockNumber();
+      const fromBlock = Math.max(0, currentBlock - 10000); // Last 10000 blocks or from genesis
+      const events = await contracts.governor.queryFilter(filter, fromBlock, currentBlock);
 
       const proposalPromises = events.map(async (event: any) => {
         const proposalId = event.args[0].toString();
+        // ProposalCreated event args: proposalId, proposer, targets, values, signatures, calldatas, startBlock, endBlock, description
+        const description = event.args[8] as string; // Description is the 9th argument (index 8)
 
         const [
           sp500Data,
@@ -93,6 +118,7 @@ export function useGovernance(provider: BrowserProvider | null, address: string 
           hasVoted,
           availableReward: formatToken(availableReward, 6),
           hasClaimed,
+          description, // Store the original description from the event
         };
       });
 
@@ -228,15 +254,81 @@ export function useGovernance(provider: BrowserProvider | null, address: string 
     }
   }, [contractsWithSigner, toast, fetchProposals]);
 
+  const executeProposal = useCallback(async (
+    proposalId: string,
+    companyTicker: string,
+    shareholderProposalId: string,
+    voteFor: boolean,
+    description: string
+  ) => {
+    if (!contractsWithSigner) {
+      toast({
+        title: "Error",
+        description: "Please connect your wallet",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const contract = await contractsWithSigner.governor();
+      
+      // Reconstruct the EXACT calldata that was used in proposeSP500Vote
+      // From SpyDaoGovernor.sol line 99-105:
+      // targets[0] = address(this);
+      // values[0] = 0;
+      // calldatas[0] = abi.encode(companyTicker, shareholderProposalId, voteFor);
+      
+      const targets: string[] = [await contract.getAddress()];
+      const values: bigint[] = [0n];
+      
+      // ABI-encode the proposal data (companyTicker, shareholderProposalId, voteFor)
+      // Note: Convert shareholderProposalId string to BigInt for uint256 encoding
+      const abiCoder = new AbiCoder();
+      const encodedCalldata = abiCoder.encode(
+        ['string', 'uint256', 'bool'],
+        [companyTicker, BigInt(shareholderProposalId), voteFor]
+      );
+      const calldatas: string[] = [encodedCalldata];
+      
+      const descriptionHash = id(description); // keccak256 of description
+      
+      const tx = await contract.execute(targets, values, calldatas, descriptionHash);
+      
+      toast({
+        title: "Transaction Submitted",
+        description: "Executing proposal...",
+      });
+
+      await tx.wait();
+      
+      toast({
+        title: "Success",
+        description: "Proposal executed successfully!",
+      });
+
+      await fetchProposals();
+    } catch (err: any) {
+      console.error('Error executing proposal:', err);
+      toast({
+        title: "Error",
+        description: err.message || "Failed to execute proposal",
+        variant: "destructive",
+      });
+    }
+  }, [contractsWithSigner, toast, fetchProposals]);
+
   return {
     proposals,
     isLoading,
     error,
     totalRewards,
     rewardPerVote,
+    config,
     refresh: fetchProposals,
     createProposal,
     castVote,
     claimReward,
+    executeProposal,
   };
 }

@@ -1,4 +1,5 @@
 import axios from 'axios';
+// import * as cheerio from 'cheerio'; // Commented out - using mock data for now
 
 interface SPYHolding {
   symbol: string;
@@ -63,42 +64,11 @@ class SPYTrackerService {
       return this.getFromCache(cacheKey);
     }
 
-    try {
-      // Get SPY holdings from a free API
-      // Note: In production, you might need to use a paid financial data API
-      const response = await axios.get('https://api.spydex.io/v1/etf/SPY/holdings', {
-        timeout: 10000,
-      });
-
-      const holdings = response.data.holdings || [];
-      
-      // Calculate total market value and weights
-      const totalMarketValue = holdings.reduce((sum: number, holding: any) => sum + holding.market_value, 0);
-      
-      const normalizedHoldings: SPYHolding[] = holdings.map((holding: any) => ({
-        symbol: holding.symbol,
-        name: holding.name,
-        shares: holding.shares,
-        weight: (holding.market_value / totalMarketValue) * 100,
-        marketValue: holding.market_value,
-        sector: holding.sector || 'Other',
-      }));
-
-      const composition: SPYComposition = {
-        totalMarketValue,
-        holdings: normalizedHoldings.sort((a, b) => b.weight - a.weight),
-        totalHoldings: normalizedHoldings.length,
-        lastUpdated: new Date().toISOString(),
-      };
-
-      this.setCache(cacheKey, composition);
-      return composition;
-    } catch (error) {
-      console.error('Error getting SPY composition from API:', error);
-      
-      // Fallback to mock data for development
-      return this.getMockSPYComposition();
-    }
+    // Using mock data for now (cheerio scraping disabled)
+    console.log('Using mock SPY composition data...');
+    const composition = this.getMockSPYComposition();
+    this.setCache(cacheKey, composition);
+    return composition;
   }
 
   private getMockSPYComposition(): SPYComposition {
