@@ -1,12 +1,12 @@
-# SPYDAO Landing Page
+# SPYDAO - On-Chain Governance System
 
 ## Overview
-A minimal, beautifully designed landing page for SPYDAO (Decentralized Autonomous Organization) with MetaMask wallet authentication. Built with React, TypeScript, Vite, and ethers.js v6.
+SPY DAO is an on-chain governance system that democratizes index fund voting rights. The system includes an ERC4626 vault (SPYVault) that issues governance-enabled shares (spDAO), a Governor contract for S&P 500 shareholder proposal voting with reward mechanisms, and a backend trading system using Alpaca API to maintain SPY-mirroring portfolio positions.
 
 ## Project Status
-**Current State**: MVP Complete - Fully functional landing page with MetaMask integration
+**Current State**: MVP Complete - Smart contracts deployed, frontend operational, backend trading system active
 
-**Last Updated**: November 18, 2025
+**Last Updated**: November 19, 2025
 
 ## Features
 - ✅ Minimal centered landing page design
@@ -19,27 +19,52 @@ A minimal, beautifully designed landing page for SPYDAO (Decentralized Autonomou
 - ✅ Proper event listener cleanup
 
 ## Tech Stack
+### Smart Contracts
+- Solidity 0.8.20-0.8.25
+- OpenZeppelin contracts (ERC4626, Governor, AccessControl)
+- Deployed on Rayls Devnet (Chain ID: 1729)
+- RPC URL: https://devnet-rpc.rayls.com
+
 ### Frontend
 - React 18 with TypeScript
 - Vite for build tooling
 - Tailwind CSS for styling
 - ethers.js v6 for Ethereum wallet integration
+- TanStack Query for data fetching
 - Wouter for routing
 - Shadcn UI components
 
 ### Backend
 - Express.js server
-- In-memory storage (no database needed for current scope)
+- PostgreSQL database (Neon)
+- Alpaca Markets API for stock trading
+- Portfolio rebalancing system
+- Webhook service for blockchain event processing
 
 ## Project Architecture
 
 ### Key Files
-- `client/src/pages/home.tsx` - Main landing page component
-- `client/src/hooks/use-wallet.ts` - Custom React hook for MetaMask wallet management
-- `client/src/App.tsx` - Application root with routing
-- `design_guidelines.md` - Comprehensive design system documentation
-- `tailwind.config.ts` - Design tokens and theme configuration
-- `client/index.html` - SEO meta tags and font imports
+
+**Smart Contracts:**
+- `contracts/spydao.sol` - SPYVault ERC4626 contract
+- `contracts/SpyDaoGovernor.sol` - Governor contract for S&P 500 proposals
+- `contracts/MockUSD.sol` - Mock stablecoin for testing
+- `contracts/MockSPYOracle.sol` - Mock price oracle
+
+**Frontend:**
+- `client/src/pages/home.tsx` - Landing page
+- `client/src/pages/vault.tsx` - Vault operations (deposit/withdraw/delegate)
+- `client/src/pages/governance.tsx` - Governance features (proposals/voting)
+- `client/src/hooks/use-wallet.ts` - MetaMask wallet management
+- `client/src/hooks/use-vault.ts` - Vault contract interactions
+- `client/src/hooks/use-governance.ts` - Governance contract interactions
+- `client/src/lib/contracts.ts` - Contract addresses and ABIs
+
+**Backend:**
+- `server/services/portfolioRebalancer.ts` - Alpaca portfolio management
+- `server/services/spyTrackerService.ts` - SPY composition tracking
+- `server/services/webhookService.ts` - Blockchain event processing
+- `server/tradingWorker.ts` - Automated trading worker
 
 ### Design System
 **Typography**:
@@ -82,19 +107,50 @@ E2E tests verify:
 - MetaMask detection and error handling
 - Responsive layout and typography
 
-## Recent Changes
-- **2025-11-18**: Initial implementation
-  - Created minimal landing page with centered design
-  - Implemented MetaMask integration with ethers.js v6
-  - Added custom useWallet hook with proper event cleanup
-  - Configured design tokens (fonts, colors, spacing)
-  - Added SEO meta tags
-  - Completed E2E testing
+## Deployment Information
 
-## Future Enhancements (Not in Current Scope)
-- Network detection and switching
-- ENS name resolution
-- Wallet balance display
-- Transaction history
+### Smart Contracts (Rayls Devnet)
+- **Network**: Rayls Devnet
+- **Chain ID**: 1729
+- **RPC URL**: https://devnet-rpc.rayls.com
+- **SPYVault**: 0x2181BaAAb16e8a4E08c7fFAB8DA1780B53eD05D2
+- **MockUSD**: 0xB6c7B1ef0947596FC2d8eBE577b97f34cBBD2Fb1
+- **MockSPYOracle**: 0x19a881AF139D665bD857Aedf6EDcBc0dBee52765
+- **SPYDAOGovernor**: 0x4DD81784392EC93a7e88e190Baca21EfF486895D
+
+### Configuration Notes
+- **SPYDex API**: The `api.spydex.io` API doesn't exist - system uses mock SPY composition data as fallback
+- **Environment Variables**: 
+  - `ETHEREUM_RPC_URL` defaults to https://devnet-rpc.rayls.com
+  - `CONTRACT_ADDRESS` defaults to SPYVault address
+  - Production deployments should set these explicitly
+  - `ALPACA_API_KEY` and `ALPACA_API_SECRET` are required for trading
+  - `DATABASE_URL` is required for PostgreSQL connection
+
+## Recent Changes
+- **2025-11-19**: Configuration fixes and verification
+  - Fixed RPC URL from rpc.rayls.xyz to devnet-rpc.rayls.com
+  - Added default fallback values for webhook service environment variables
+  - Verified contract ABIs match deployed contracts
+  - Confirmed Alpaca trading system is operational
+  - Tested frontend loading and wallet connection interface
+- **2025-11-18**: Initial implementation
+  - Deployed smart contracts to Rayls Devnet
+  - Created frontend with vault and governance pages
+  - Implemented backend trading system with Alpaca API
+  - Set up portfolio rebalancing and webhook services
+
+## Known Issues
+- Browser console may show Web3 RPC errors (-32603) when MetaMask is not connected - this is expected behavior
+- SPYDex API (`api.spydex.io`) is not accessible - system correctly falls back to mock SPY composition data
+- Webhook endpoints need proper API route configuration to process blockchain events
+
+## Future Enhancements
+- Replace mock SPY data with real-time ETF holdings API (Finnhub, Intrinio, or EOD Historical Data)
+- Implement real-time blockchain event listening via WebSocket connections
+- Add KYC verification system integration
+- Implement sanctions screening service
+- Add network detection and automatic switching to Rayls Devnet
 - Multi-wallet support (WalletConnect, Coinbase Wallet)
-- DAO governance features
+- Enhanced governance features (delegation, proposal templates)
+- Real-time portfolio analytics dashboard
