@@ -63,10 +63,21 @@ export function useVault(provider: BrowserProvider | null, address: string | nul
         contracts.mockUSD.allowance(address, contracts.vault.target),
       ]);
 
+      console.log('🔍 DEBUG: Raw blockchain values:');
+      console.log('  - mUSD Balance (raw bigint):', mUSDBalance.toString());
+      console.log('  - spDAO Balance (raw bigint):', spDAOBalance.toString());
+
+      const formattedMUSDBalance = formatToken(mUSDBalance, 6);
+      const formattedSpDAOBalance = formatToken(spDAOBalance, 18);
+
+      console.log('🔍 DEBUG: After formatToken conversion:');
+      console.log('  - mUSD Balance (formatted with 6 decimals):', formattedMUSDBalance);
+      console.log('  - spDAO Balance (formatted with 18 decimals):', formattedSpDAOBalance);
+
       setData({
-        spDAOBalance: formatToken(spDAOBalance, 18),
+        spDAOBalance: formattedSpDAOBalance,
         spDAOBalanceRaw: spDAOBalance,
-        mUSDBalance: formatToken(mUSDBalance, 6),
+        mUSDBalance: formattedMUSDBalance,
         mUSDBalanceRaw: mUSDBalance,
         totalAssets: formatToken(totalAssets, 6),
         spyPrice: formatToken(spyPrice, 8),

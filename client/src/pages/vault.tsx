@@ -142,7 +142,14 @@ export default function Vault() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold" data-testid="text-musd-balance">
-                  {parseFloat(vault.data.mUSDBalance).toFixed(2)}
+                  {(() => {
+                    const displayValue = parseFloat(vault.data.mUSDBalance).toFixed(2);
+                    console.log('🔍 DEBUG vault.tsx display:');
+                    console.log('  - vault.data.mUSDBalance (string):', vault.data.mUSDBalance);
+                    console.log('  - parseFloat result:', parseFloat(vault.data.mUSDBalance));
+                    console.log('  - Final display value:', displayValue);
+                    return displayValue;
+                  })()}
                 </div>
                 <p className="text-xs text-muted-foreground">Available to deposit</p>
               </CardContent>
