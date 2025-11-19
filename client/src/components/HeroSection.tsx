@@ -55,81 +55,210 @@ export function HeroSection() {
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <defs>
-                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="rgba(0, 0, 0, 0.1)" />
+                    <linearGradient id="nodeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="rgba(0, 0, 0, 0.15)" />
                       <stop offset="100%" stopColor="rgba(0, 0, 0, 0.05)" />
                     </linearGradient>
+                    <filter id="glow">
+                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                      <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
                   </defs>
                   
-                  {/* Animated background circles */}
-                  <circle cx="200" cy="200" r="150" fill="url(#grad1)" className="animate-pulse" />
-                  
-                  {/* Animated voting/gov nodes */}
-                  <g style={{ animation: 'bounce-slow 3s ease-in-out infinite' }}>
-                    <circle cx="150" cy="150" r="20" fill="rgba(0, 0, 0, 0.15)" />
-                    <circle cx="150" cy="150" r="8" fill="rgba(0, 0, 0, 0.3)" />
+                  {/* Background grid pattern */}
+                  <g opacity="0.1">
+                    <line x1="0" y1="100" x2="400" y2="100" stroke="rgba(0, 0, 0, 0.1)" strokeWidth="1" />
+                    <line x1="0" y1="200" x2="400" y2="200" stroke="rgba(0, 0, 0, 0.1)" strokeWidth="1" />
+                    <line x1="0" y1="300" x2="400" y2="300" stroke="rgba(0, 0, 0, 0.1)" strokeWidth="1" />
+                    <line x1="100" y1="0" x2="100" y2="400" stroke="rgba(0, 0, 0, 0.1)" strokeWidth="1" />
+                    <line x1="200" y1="0" x2="200" y2="400" stroke="rgba(0, 0, 0, 0.1)" strokeWidth="1" />
+                    <line x1="300" y1="0" x2="300" y2="400" stroke="rgba(0, 0, 0, 0.1)" strokeWidth="1" />
                   </g>
-                  
-                  <g style={{ animation: 'bounce-slow 3s ease-in-out infinite 1s' }}>
-                    <circle cx="250" cy="150" r="20" fill="rgba(0, 0, 0, 0.15)" />
-                    <circle cx="250" cy="150" r="8" fill="rgba(0, 0, 0, 0.3)" />
-                  </g>
-                  
-                  <g style={{ animation: 'bounce-slow 3s ease-in-out infinite 2s' }}>
-                    <circle cx="200" cy="250" r="20" fill="rgba(0, 0, 0, 0.15)" />
-                    <circle cx="200" cy="250" r="8" fill="rgba(0, 0, 0, 0.3)" />
-                  </g>
-                  
-                  {/* Animated connecting lines */}
-                  <line 
-                    x1="150" 
-                    y1="150" 
-                    x2="200" 
-                    y2="250" 
-                    stroke="rgba(0, 0, 0, 0.2)" 
-                    strokeWidth="2"
-                    style={{ animation: 'pulse-slow 2s ease-in-out infinite' }}
-                  />
-                  <line 
-                    x1="250" 
-                    y1="150" 
-                    x2="200" 
-                    y2="250" 
-                    stroke="rgba(0, 0, 0, 0.2)" 
-                    strokeWidth="2"
-                    style={{ animation: 'pulse-slow 2s ease-in-out infinite 0.5s' }}
-                  />
-                  <line 
-                    x1="150" 
-                    y1="150" 
-                    x2="250" 
-                    y2="150" 
-                    stroke="rgba(0, 0, 0, 0.2)" 
-                    strokeWidth="2"
-                    style={{ animation: 'pulse-slow 2s ease-in-out infinite 1s' }}
-                  />
                   
                   {/* Central governance hub */}
-                  <circle 
-                    cx="200" 
-                    cy="200" 
-                    r="40" 
-                    fill="rgba(0, 0, 0, 0.1)" 
-                    style={{ animation: 'pulse-slow 2.5s ease-in-out infinite' }}
-                  />
-                  <circle cx="200" cy="200" r="15" fill="rgba(0, 0, 0, 0.25)" />
+                  <g>
+                    <circle 
+                      cx="200" 
+                      cy="200" 
+                      r="50" 
+                      fill="url(#nodeGradient)" 
+                      style={{ animation: 'pulse-slow 3s ease-in-out infinite' }}
+                    />
+                    <circle 
+                      cx="200" 
+                      cy="200" 
+                      r="30" 
+                      fill="rgba(0, 0, 0, 0.2)" 
+                      style={{ animation: 'pulse-slow 2s ease-in-out infinite 0.5s' }}
+                    />
+                    <circle cx="200" cy="200" r="12" fill="rgba(0, 0, 0, 0.4)" filter="url(#glow)" />
+                  </g>
+                  
+                  {/* Network nodes - Top row */}
+                  <g style={{ animation: 'bounce-slow 4s ease-in-out infinite' }}>
+                    <circle cx="100" cy="100" r="20" fill="rgba(0, 0, 0, 0.12)" />
+                    <circle cx="100" cy="100" r="8" fill="rgba(0, 0, 0, 0.3)" />
+                  </g>
+                  
+                  <g style={{ animation: 'bounce-slow 4s ease-in-out infinite 0.7s' }}>
+                    <circle cx="300" cy="100" r="20" fill="rgba(0, 0, 0, 0.12)" />
+                    <circle cx="300" cy="100" r="8" fill="rgba(0, 0, 0, 0.3)" />
+                  </g>
+                  
+                  {/* Network nodes - Bottom row */}
+                  <g style={{ animation: 'bounce-slow 4s ease-in-out infinite 1.4s' }}>
+                    <circle cx="100" cy="300" r="20" fill="rgba(0, 0, 0, 0.12)" />
+                    <circle cx="100" cy="300" r="8" fill="rgba(0, 0, 0, 0.3)" />
+                  </g>
+                  
+                  <g style={{ animation: 'bounce-slow 4s ease-in-out infinite 2.1s' }}>
+                    <circle cx="300" cy="300" r="20" fill="rgba(0, 0, 0, 0.12)" />
+                    <circle cx="300" cy="300" r="8" fill="rgba(0, 0, 0, 0.3)" />
+                  </g>
+                  
+                  {/* Side nodes */}
+                  <g style={{ animation: 'bounce-slow 4s ease-in-out infinite 0.35s' }}>
+                    <circle cx="50" cy="200" r="18" fill="rgba(0, 0, 0, 0.1)" />
+                    <circle cx="50" cy="200" r="7" fill="rgba(0, 0, 0, 0.25)" />
+                  </g>
+                  
+                  <g style={{ animation: 'bounce-slow 4s ease-in-out infinite 1.75s' }}>
+                    <circle cx="350" cy="200" r="18" fill="rgba(0, 0, 0, 0.1)" />
+                    <circle cx="350" cy="200" r="7" fill="rgba(0, 0, 0, 0.25)" />
+                  </g>
+                  
+                  {/* Connecting lines - Network structure */}
+                  <g opacity="0.3">
+                    <line 
+                      x1="200" 
+                      y1="200" 
+                      x2="100" 
+                      y2="100" 
+                      stroke="rgba(0, 0, 0, 0.2)" 
+                      strokeWidth="2"
+                      style={{ animation: 'pulse-slow 2.5s ease-in-out infinite' }}
+                    />
+                    <line 
+                      x1="200" 
+                      y1="200" 
+                      x2="300" 
+                      y2="100" 
+                      stroke="rgba(0, 0, 0, 0.2)" 
+                      strokeWidth="2"
+                      style={{ animation: 'pulse-slow 2.5s ease-in-out infinite 0.3s' }}
+                    />
+                    <line 
+                      x1="200" 
+                      y1="200" 
+                      x2="100" 
+                      y2="300" 
+                      stroke="rgba(0, 0, 0, 0.2)" 
+                      strokeWidth="2"
+                      style={{ animation: 'pulse-slow 2.5s ease-in-out infinite 0.6s' }}
+                    />
+                    <line 
+                      x1="200" 
+                      y1="200" 
+                      x2="300" 
+                      y2="300" 
+                      stroke="rgba(0, 0, 0, 0.2)" 
+                      strokeWidth="2"
+                      style={{ animation: 'pulse-slow 2.5s ease-in-out infinite 0.9s' }}
+                    />
+                    <line 
+                      x1="200" 
+                      y1="200" 
+                      x2="50" 
+                      y2="200" 
+                      stroke="rgba(0, 0, 0, 0.2)" 
+                      strokeWidth="2"
+                      style={{ animation: 'pulse-slow 2.5s ease-in-out infinite 1.2s' }}
+                    />
+                    <line 
+                      x1="200" 
+                      y1="200" 
+                      x2="350" 
+                      y2="200" 
+                      stroke="rgba(0, 0, 0, 0.2)" 
+                      strokeWidth="2"
+                      style={{ animation: 'pulse-slow 2.5s ease-in-out infinite 1.5s' }}
+                    />
+                  </g>
+                  
+                  {/* Inter-node connections */}
+                  <g opacity="0.15">
+                    <line 
+                      x1="100" 
+                      y1="100" 
+                      x2="300" 
+                      y2="100" 
+                      stroke="rgba(0, 0, 0, 0.15)" 
+                      strokeWidth="1.5"
+                      strokeDasharray="5 5"
+                      style={{ animation: 'pulse-slow 3s ease-in-out infinite' }}
+                    />
+                    <line 
+                      x1="100" 
+                      y1="300" 
+                      x2="300" 
+                      y2="300" 
+                      stroke="rgba(0, 0, 0, 0.15)" 
+                      strokeWidth="1.5"
+                      strokeDasharray="5 5"
+                      style={{ animation: 'pulse-slow 3s ease-in-out infinite 1s' }}
+                    />
+                  </g>
                   
                   {/* Rotating outer ring */}
                   <g transform="translate(200, 200)">
                     <circle 
                       cx="0" 
                       cy="0" 
-                      r="100" 
+                      r="120" 
                       fill="none" 
-                      stroke="rgba(0, 0, 0, 0.1)" 
+                      stroke="rgba(0, 0, 0, 0.08)" 
                       strokeWidth="2"
-                      strokeDasharray="10 5"
-                      style={{ animation: 'spin-slow 20s linear infinite' }}
+                      strokeDasharray="8 4"
+                      style={{ animation: 'spin-slow 25s linear infinite' }}
+                    />
+                  </g>
+                  
+                  {/* Voting/Governance symbols - Small checkmarks */}
+                  <g opacity="0.4">
+                    <path 
+                      d="M 150 150 L 160 160 L 180 140" 
+                      stroke="rgba(0, 0, 0, 0.3)" 
+                      strokeWidth="2" 
+                      fill="none" 
+                      strokeLinecap="round"
+                      style={{ animation: 'pulse-slow 2s ease-in-out infinite' }}
+                    />
+                    <path 
+                      d="M 250 150 L 260 160 L 280 140" 
+                      stroke="rgba(0, 0, 0, 0.3)" 
+                      strokeWidth="2" 
+                      fill="none" 
+                      strokeLinecap="round"
+                      style={{ animation: 'pulse-slow 2s ease-in-out infinite 0.5s' }}
+                    />
+                    <path 
+                      d="M 150 250 L 160 260 L 180 240" 
+                      stroke="rgba(0, 0, 0, 0.3)" 
+                      strokeWidth="2" 
+                      fill="none" 
+                      strokeLinecap="round"
+                      style={{ animation: 'pulse-slow 2s ease-in-out infinite 1s' }}
+                    />
+                    <path 
+                      d="M 250 250 L 260 260 L 280 240" 
+                      stroke="rgba(0, 0, 0, 0.3)" 
+                      strokeWidth="2" 
+                      fill="none" 
+                      strokeLinecap="round"
+                      style={{ animation: 'pulse-slow 2s ease-in-out infinite 1.5s' }}
                     />
                   </g>
                 </svg>

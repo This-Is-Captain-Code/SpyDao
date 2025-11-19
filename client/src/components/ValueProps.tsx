@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { 
   Vote, 
   Users, 
-  DollarSign, 
   Shield, 
   TrendingUp 
 } from 'lucide-react';
@@ -12,35 +11,24 @@ const features = [
     icon: Vote,
     title: "Democratic Governance",
     description: "One token equals one vote across all 500 S&P companies. Your stake in the index gives you real voting power.",
-    color: "text-black",
     details: "Every spDAO token you hold represents a proportional share of voting rights across the entire S&P 500. Unlike traditional index funds where institutions control all votes, SPY DAO ensures your voice is heard in every shareholder meeting, proxy vote, and governance decision."
-  },
-  {
-    icon: DollarSign,
-    title: "Passive Income + Governance",
-    description: "Earn market returns while actively participating in corporate governance. Get double the value from your investment.",
-    color: "text-black",
-    details: "Traditional index investing means giving up governance rights for passive returns. SPY DAO breaks this trade-off. You maintain full market exposure to S&P 500 performance while gaining the ability to vote on critical corporate decisions, maximizing both financial returns and democratic participation."
   },
   {
     icon: Users,
     title: "Collective Power",
     description: "Pool voting rights with thousands of other investors. Together, we command institutional-level influence.",
-    color: "text-black",
     details: "By aggregating voting power from thousands of individual investors, SPY DAO creates a collective voice that rivals institutional shareholders. This pooled approach means your individual stake contributes to meaningful change across corporate America, from ESG initiatives to executive compensation."
   },
   {
     icon: Shield,
     title: "Transparent Ownership",
     description: "Verified on-chain ownership aligned with actual SPY shares through transparent protocols and regulated intermediaries.",
-    color: "text-black",
     details: "All ownership and voting rights are verified on-chain through zero-knowledge proofs and transparent protocols. Every spDAO token is backed by real SPY shares held by regulated custodians, ensuring your governance rights are legitimate, verifiable, and enforceable."
   },
   {
     icon: TrendingUp,
     title: "Market Returns",
     description: "Get exposure to the entire S&P 500 performance while gaining governance rights. Win-win for passive investors.",
-    color: "text-black",
     details: "Maintain full exposure to S&P 500 market performance while gaining unprecedented governance capabilities. Your investment tracks the index's returns while you participate in shaping the future of America's largest corporations through active voting and proposal submission."
   }
 ];
@@ -88,22 +76,20 @@ export function ValueProps() {
                       setIsTransitioning(false);
                     }, 300);
                   }}
-                  className={`w-full text-left rounded-lg p-2.5 transition-all ${
+                  className={`w-full text-left rounded-lg p-2 transition-all ${
                     selectedFeature === index
                       ? 'bg-black text-white shadow-lg'
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
                   }`}
                 >
-                  <div className="flex items-center space-x-2.5">
-                    <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${
+                  <div className="flex items-center space-x-2">
+                    <div className={`flex h-7 w-7 items-center justify-center rounded-lg ${
                       selectedFeature === index ? 'bg-white/20' : 'bg-white dark:bg-gray-700'
                     }`}>
-                      <feature.icon className={`h-4 w-4 ${
-                        selectedFeature === index ? 'text-white' : feature.color
-                      }`} />
+                      <feature.icon className="h-3.5 w-3.5 text-black" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-xs md:text-sm">
+                      <h3 className="font-semibold text-xs">
                         {feature.title}
                       </h3>
                     </div>
