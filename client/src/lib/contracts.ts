@@ -3,7 +3,7 @@
 export const CONTRACTS = {
   network: "rayls",
   chainId: 1729, // Rayls chain ID
-  rpcUrl: "https://rpc.rayls.xyz",
+  rpcUrl: "https://devnet-rpc.rayls.com",
   deployer: "0xaFEf2f5626961ba219Cd9Eb1D7A1f1B08896DD08",
   MockUSD: "0xB6c7B1ef0947596FC2d8eBE577b97f34cBBD2Fb1",
   MockSPYOracle: "0x19a881AF139D665bD857Aedf6EDcBc0dBee52765",

@@ -50,8 +50,8 @@ class WebhookService {
   }
 
   private initializeEthereum() {
-    const rpcUrl = process.env.ETHEREUM_RPC_URL;
-    const contractAddress = process.env.CONTRACT_ADDRESS;
+    const rpcUrl = process.env.ETHEREUM_RPC_URL || 'https://devnet-rpc.rayls.com';
+    const contractAddress = process.env.CONTRACT_ADDRESS || '0x2181BaAAb16e8a4E08c7fFAB8DA1780B53eD05D2';
     
     if (!rpcUrl || !contractAddress) {
       console.warn('Ethereum configuration missing, blockchain services disabled');
