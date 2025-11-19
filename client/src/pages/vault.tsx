@@ -10,7 +10,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { ArrowDown, ArrowUp, Coins, TrendingUp, Users, AlertCircle, CheckCircle, XCircle, Shield } from 'lucide-react';
+import { ArrowDown, ArrowUp, Coins, TrendingUp, Users, AlertCircle, CheckCircle, XCircle, Shield, HelpCircle } from 'lucide-react';
 import { Link } from 'wouter';
 import { DAppHeader } from '@/components/DAppHeader';
 
@@ -26,9 +26,9 @@ export default function Vault() {
     return (
       <>
         <DAppHeader />
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="container mx-auto px-4 pt-24 pb-8 max-w-4xl">
           <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-            <Coins className="w-16 h-16 text-primary" data-testid="icon-vault" />
+            <Coins className="w-16 h-16 text-foreground/60" data-testid="icon-vault" />
             <div className="text-center">
               <h1 className="text-3xl font-bold mb-2" data-testid="text-title">SPY Vault</h1>
               <p className="text-muted-foreground mb-6" data-testid="text-description">
@@ -51,18 +51,44 @@ export default function Vault() {
   return (
     <>
       <DAppHeader />
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <h1 className="text-4xl font-bold" data-testid="text-page-title">SPY Vault</h1>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Connected:</span>
-            <code className="text-sm font-mono bg-muted px-2 py-1 rounded" data-testid="text-address">
-              {truncateAddress(address)}
-            </code>
+      <div className="container mx-auto px-4 pt-24 pb-8 max-w-6xl">
+      <div className="mb-10">
+        <div className="flex items-center justify-between mb-3">
+          <h1 className="text-4xl font-bold tracking-tight" data-testid="text-page-title">SPY Vault</h1>
+          <div className="flex flex-col items-end gap-8">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground font-medium">Connected:</span>
+              <code className="text-sm font-mono bg-muted px-3 py-1.5 rounded-md border" data-testid="text-address">
+                {truncateAddress(address)}
+              </code>
+            </div>
+            {isCorrectNetwork && vault.data && (
+              <div className="flex items-center gap-2 mt-1" data-testid="card-quick-actions">
+                <Button
+                  onClick={vault.claimFromFaucet}
+                  variant="outline"
+                  size="sm"
+                  className="h-7 text-xs px-2"
+                  data-testid="button-faucet"
+                >
+                  <ArrowDown className="h-3 w-3 mr-1" />
+                  Faucet
+                </Button>
+                <Button
+                  onClick={vault.refresh}
+                  variant="outline"
+                  size="sm"
+                  className="h-7 text-xs px-2"
+                  data-testid="button-refresh"
+                >
+                  <TrendingUp className="h-3 w-3 mr-1" />
+                  Refresh
+                </Button>
+              </div>
+            )}
           </div>
         </div>
-        <p className="text-muted-foreground" data-testid="text-subtitle">
+        <p className="text-muted-foreground text-lg" data-testid="text-subtitle">
           Deposit assets and receive governance-enabled spDAO shares
         </p>
       </div>
@@ -85,20 +111,79 @@ export default function Vault() {
         </Alert>
       )}
 
+      {isCorrectNetwork && admin.data && (
+        <div className="mb-3 flex items-center justify-end gap-4 text-xs" data-testid="card-roles">
+          <span className="text-muted-foreground font-medium">Roles:</span>
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1">
+              <span className="text-muted-foreground">Admin:</span>
+              {admin.data.hasAdminRole ? (
+                <Badge variant="default" className="h-5 px-1.5 text-xs font-semibold" data-testid="badge-admin-role">
+                  <Shield className="h-2.5 w-2.5 mr-0.5" />
+                  Active
+                </Badge>
+              ) : (
+                <span className="text-muted-foreground">None</span>
+              )}
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="text-muted-foreground">Executor:</span>
+              {admin.data.hasExecutorRole ? (
+                <Badge variant="default" className="h-5 px-1.5 text-xs font-semibold" data-testid="badge-executor-role">
+                  <Shield className="h-2.5 w-2.5 mr-0.5" />
+                  Active
+                </Badge>
+              ) : (
+                <span className="text-muted-foreground">None</span>
+              )}
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="text-muted-foreground">Compliance:</span>
+              {admin.data.hasComplianceRole ? (
+                <Badge variant="default" className="h-5 px-1.5 text-xs font-semibold" data-testid="badge-compliance-role">
+                  <Shield className="h-2.5 w-2.5 mr-0.5" />
+                  Active
+                </Badge>
+              ) : (
+                <span className="text-muted-foreground">None</span>
+              )}
+            </span>
+          </div>
+        </div>
+      )}
+
       {isCorrectNetwork && (needsKYC || isBlocked || isPaused) && (
-        <Alert className="mb-6" variant={isBlocked ? "destructive" : "default"} data-testid="alert-status">
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
-            {isBlocked && "Your address is blocked from vault operations."}
-            {isPaused && "The vault is currently paused."}
-            {needsKYC && !isBlocked && !isPaused && "KYC verification required. If you have admin permissions (COMPLIANCE_ROLE), use the 'Complete KYC' button below. Otherwise, contact an admin for approval."}
+        <Alert className={`mb-6 ${needsKYC && !isBlocked && !isPaused ? 'bg-black text-white border-black py-3' : ''}`} variant={isBlocked ? "destructive" : "default"} data-testid="alert-status">
+          {needsKYC && !isBlocked && !isPaused ? (
+            <HelpCircle className="h-3.5 w-3.5" />
+          ) : (
+            <AlertCircle className="h-4 w-4" />
+          )}
+          <AlertDescription className={`text-sm flex items-center justify-between ${needsKYC && !isBlocked && !isPaused ? 'text-white' : ''}`}>
+            <span>
+              {isBlocked && "Your address is blocked from vault operations."}
+              {isPaused && "The vault is currently paused."}
+              {needsKYC && !isBlocked && !isPaused && "KYC verification required. If you have admin permissions (COMPLIANCE_ROLE), use the button to complete KYC. Otherwise, contact an admin for approval."}
+            </span>
+            {needsKYC && !isBlocked && !isPaused && vault.data && (
+              <Button
+                onClick={vault.completeKYC}
+                variant="default"
+                size="sm"
+                className="ml-4 h-7 text-xs px-3 bg-white text-black hover:bg-gray-100"
+                data-testid="button-complete-kyc"
+              >
+                <CheckCircle className="mr-1.5 h-3 w-3" />
+                Complete KYC
+              </Button>
+            )}
           </AlertDescription>
         </Alert>
       )}
 
       {!isCorrectNetwork ? (
         <div className="flex flex-col items-center justify-center min-h-[40vh] gap-6">
-          <AlertCircle className="w-16 h-16 text-destructive" />
+          <AlertCircle className="w-16 h-16 text-foreground/60" />
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-2">Wrong Network</h2>
             <p className="text-muted-foreground mb-4">
@@ -125,42 +210,42 @@ export default function Vault() {
       ) : vault.data ? (
         <>
           <div className="grid gap-6 md:grid-cols-3 mb-8">
-            <Card data-testid="card-spdao-balance">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">spDAO Balance</CardTitle>
+            <Card data-testid="card-spdao-balance" className="border-2">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-sm font-semibold uppercase tracking-wide">spDAO Balance</CardTitle>
                 <Coins className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold" data-testid="text-spdao-balance">
+                <div className="text-3xl font-bold mb-1" data-testid="text-spdao-balance">
                   {parseFloat(vault.data.spDAOBalance).toFixed(4)}
                 </div>
-                <p className="text-xs text-muted-foreground">Governance shares</p>
+                <p className="text-xs text-muted-foreground font-medium">Governance shares</p>
               </CardContent>
             </Card>
 
-            <Card data-testid="card-musd-balance">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">mUSD Balance</CardTitle>
+            <Card data-testid="card-musd-balance" className="border-2">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-sm font-semibold uppercase tracking-wide">mUSD Balance</CardTitle>
                 <ArrowDown className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold" data-testid="text-musd-balance">
+                <div className="text-3xl font-bold mb-1" data-testid="text-musd-balance">
                   {parseFloat(vault.data.mUSDBalance).toFixed(2)}
                 </div>
-                <p className="text-xs text-muted-foreground">Available to deposit</p>
+                <p className="text-xs text-muted-foreground font-medium">Available to deposit</p>
               </CardContent>
             </Card>
 
-            <Card data-testid="card-voting-power">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Voting Power</CardTitle>
+            <Card data-testid="card-voting-power" className="border-2">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-sm font-semibold uppercase tracking-wide">Voting Power</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold" data-testid="text-voting-power">
+                <div className="text-3xl font-bold mb-1" data-testid="text-voting-power">
                   {parseFloat(vault.data.votingPower).toFixed(4)}
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground font-medium">
                   {vault.data.delegate ? `Delegated to ${truncateAddress(vault.data.delegate)}` : 'Self-delegated'}
                 </p>
               </CardContent>
@@ -168,193 +253,92 @@ export default function Vault() {
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 mb-8">
-            <Card data-testid="card-vault-stats">
-              <CardHeader>
-                <CardTitle>Vault Statistics</CardTitle>
-                <CardDescription>Current vault metrics and pricing</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Share Price:</span>
-                  <span className="text-sm font-medium" data-testid="text-share-price">
-                    ${parseFloat(vault.data.sharePrice).toFixed(6)} mUSD
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">TVL (Total Value Locked):</span>
-                  <span className="text-sm font-medium" data-testid="text-tvl">
-                    ${parseFloat(vault.data.tvlUSD).toLocaleString(undefined, {maximumFractionDigits: 2})} mUSD
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Total Supply:</span>
-                  <span className="text-sm font-medium" data-testid="text-total-supply">
-                    {parseFloat(vault.data.totalSupply).toFixed(4)} spDAO
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">SPY Price:</span>
-                  <span className="text-sm font-medium" data-testid="text-spy-price">
-                    ${parseFloat(vault.data.spyPrice).toFixed(2)}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">KYC Status:</span>
-                  <span className="flex items-center gap-1 text-sm font-medium">
-                    {vault.data.isKYCCompleted ? (
-                      <>
-                        <CheckCircle className="h-3 w-3 text-green-500" />
-                        <span className="text-green-500">Verified</span>
-                      </>
-                    ) : (
-                      <>
-                        <XCircle className="h-3 w-3 text-red-500" />
-                        <span className="text-red-500">Not Verified</span>
-                      </>
-                    )}
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card data-testid="card-synthetic-exposure">
-              <CardHeader>
-                <CardTitle>Synthetic SPY Exposure</CardTitle>
-                <CardDescription>Off-chain SPY holdings tracked in the vault</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Synthetic Shares:</span>
-                  <span className="text-sm font-medium" data-testid="text-synthetic-shares">
-                    {vault.data.syntheticShares} SPY
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Exposure Value:</span>
-                  <span className="text-sm font-medium" data-testid="text-synthetic-value">
-                    ${parseFloat(vault.data.syntheticExposureUSD).toLocaleString(undefined, {maximumFractionDigits: 2})} mUSD
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">% of TVL:</span>
-                  <span className="text-sm font-medium" data-testid="text-synthetic-percent">
-                    {parseFloat(vault.data.syntheticExposurePercent).toFixed(2)}%
-                  </span>
-                </div>
-                <Alert data-testid="alert-synthetic-info">
-                  <TrendingUp className="h-4 w-4" />
-                  <AlertDescription className="text-xs">
-                    Synthetic holdings represent real SPY shares held by the broker wallet off-chain, tracked on-chain for transparency.
-                  </AlertDescription>
-                </Alert>
-              </CardContent>
-            </Card>
-
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2 mb-8">
-            <Card data-testid="card-roles">
-              <CardHeader>
-                <CardTitle>Your Roles</CardTitle>
-                <CardDescription>Vault access control roles</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {admin.data ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Admin Role:</span>
-                      {admin.data.hasAdminRole ? (
-                        <Badge variant="default" data-testid="badge-admin-role">
-                          <Shield className="h-3 w-3 mr-1" />
-                          Active
-                        </Badge>
-                      ) : (
-                        <Badge variant="secondary" data-testid="badge-admin-role">None</Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Executor Role:</span>
-                      {admin.data.hasExecutorRole ? (
-                        <Badge variant="default" data-testid="badge-executor-role">
-                          <Shield className="h-3 w-3 mr-1" />
-                          Active
-                        </Badge>
-                      ) : (
-                        <Badge variant="secondary" data-testid="badge-executor-role">None</Badge>
-                      )}
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Compliance Role:</span>
-                      {admin.data.hasComplianceRole ? (
-                        <Badge variant="default" data-testid="badge-compliance-role">
-                          <Shield className="h-3 w-3 mr-1" />
-                          Active
-                        </Badge>
-                      ) : (
-                        <Badge variant="secondary" data-testid="badge-compliance-role">None</Badge>
-                      )}
-                    </div>
-                    {(admin.data.hasAdminRole || admin.data.hasExecutorRole || admin.data.hasComplianceRole) && (
-                      <Alert className="mt-2" data-testid="alert-admin-access">
-                        <Shield className="h-4 w-4" />
-                        <AlertDescription className="text-xs">
-                          You have elevated permissions. Visit the <Link href="/admin" className="underline font-medium">Admin Panel</Link> to manage vault operations.
-                        </AlertDescription>
-                      </Alert>
-                    )}
+            <div className="space-y-6">
+              <Card data-testid="card-vault-stats" className="border-2">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg font-semibold">Vault Statistics</CardTitle>
+                  <CardDescription className="text-sm">Current vault metrics and pricing</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm text-muted-foreground font-medium">Share Price:</span>
+                    <span className="text-sm font-semibold" data-testid="text-share-price">
+                      ${parseFloat(vault.data.sharePrice).toFixed(6)} mUSD
+                    </span>
                   </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">Loading roles...</p>
-                )}
-              </CardContent>
-            </Card>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm text-muted-foreground font-medium">TVL (Total Value Locked):</span>
+                    <span className="text-sm font-semibold" data-testid="text-tvl">
+                      ${parseFloat(vault.data.tvlUSD).toLocaleString(undefined, {maximumFractionDigits: 2})} mUSD
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm text-muted-foreground font-medium">Total Supply:</span>
+                    <span className="text-sm font-semibold" data-testid="text-total-supply">
+                      {parseFloat(vault.data.totalSupply).toFixed(4)} spDAO
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm text-muted-foreground font-medium">SPY Price:</span>
+                    <span className="text-sm font-semibold" data-testid="text-spy-price">
+                      ${parseFloat(vault.data.spyPrice).toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-muted-foreground">KYC Status:</span>
+                    <span className="flex items-center gap-1 text-sm font-medium">
+                      {vault.data.isKYCCompleted ? (
+                        <>
+                          <CheckCircle className="h-3 w-3" />
+                          <span>Verified</span>
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="h-3 w-3" />
+                          <span>Not Verified</span>
+                        </>
+                      )}
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
 
-            <Card data-testid="card-quick-actions">
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-                <CardDescription>Manage your position</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button
-                  onClick={vault.claimFromFaucet}
-                  variant="outline"
-                  className="w-full"
-                  data-testid="button-faucet"
-                >
-                  <ArrowDown className="mr-2 h-4 w-4" />
-                  Claim 1000 mUSD from Faucet
-                </Button>
-                {needsKYC && (
-                  <Button
-                    onClick={vault.completeKYC}
-                    variant="default"
-                    className="w-full"
-                    data-testid="button-complete-kyc"
-                  >
-                    <CheckCircle className="mr-2 h-4 w-4" />
-                    Complete KYC
-                  </Button>
-                )}
-                <Button
-                  onClick={vault.refresh}
-                  variant="outline"
-                  className="w-full"
-                  data-testid="button-refresh"
-                >
-                  <TrendingUp className="mr-2 h-4 w-4" />
-                  Refresh Data
-                </Button>
-                <Link href="/governance">
-                  <Button variant="default" className="w-full" data-testid="button-governance">
-                    <Users className="mr-2 h-4 w-4" />
-                    View Governance
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </div>
+              <Card data-testid="card-synthetic-exposure" className="border-2">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg font-semibold">Synthetic SPY Exposure</CardTitle>
+                  <CardDescription className="text-sm">Off-chain SPY holdings tracked in the vault</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm text-muted-foreground font-medium">Synthetic Shares:</span>
+                    <span className="text-sm font-semibold" data-testid="text-synthetic-shares">
+                      {vault.data.syntheticShares} SPY
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm text-muted-foreground font-medium">Exposure Value:</span>
+                    <span className="text-sm font-semibold" data-testid="text-synthetic-value">
+                      ${parseFloat(vault.data.syntheticExposureUSD).toLocaleString(undefined, {maximumFractionDigits: 2})} mUSD
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b">
+                    <span className="text-sm text-muted-foreground font-medium">% of TVL:</span>
+                    <span className="text-sm font-semibold" data-testid="text-synthetic-percent">
+                      {parseFloat(vault.data.syntheticExposurePercent).toFixed(2)}%
+                    </span>
+                  </div>
+                  <Alert data-testid="alert-synthetic-info">
+                    <TrendingUp className="h-4 w-4" />
+                    <AlertDescription className="text-xs">
+                      Synthetic holdings represent real SPY shares held by the broker wallet off-chain, tracked on-chain for transparency.
+                    </AlertDescription>
+                  </Alert>
+                </CardContent>
+              </Card>
+            </div>
 
-          <Tabs defaultValue="deposit" className="w-full">
+            <div>
+              <Tabs defaultValue="deposit" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="deposit" data-testid="tab-deposit">Deposit</TabsTrigger>
               <TabsTrigger value="withdraw" data-testid="tab-withdraw">Withdraw</TabsTrigger>
@@ -362,10 +346,10 @@ export default function Vault() {
             </TabsList>
 
             <TabsContent value="deposit" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Deposit Assets</CardTitle>
-                  <CardDescription>Deposit mUSD to receive spDAO shares</CardDescription>
+              <Card className="border-2">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg font-semibold">Deposit Assets</CardTitle>
+                  <CardDescription className="text-sm">Deposit mUSD to receive spDAO shares</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
@@ -415,10 +399,10 @@ export default function Vault() {
             </TabsContent>
 
             <TabsContent value="withdraw" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Withdraw Assets</CardTitle>
-                  <CardDescription>Burn spDAO shares to withdraw mUSD</CardDescription>
+              <Card className="border-2">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg font-semibold">Withdraw Assets</CardTitle>
+                  <CardDescription className="text-sm">Burn spDAO shares to withdraw mUSD</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
@@ -450,10 +434,10 @@ export default function Vault() {
             </TabsContent>
 
             <TabsContent value="delegate" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Delegate Voting Power</CardTitle>
-                  <CardDescription>
+              <Card className="border-2">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg font-semibold">Delegate Voting Power</CardTitle>
+                  <CardDescription className="text-sm">
                     Delegate your voting power to another address or yourself
                   </CardDescription>
                 </CardHeader>
@@ -495,7 +479,9 @@ export default function Vault() {
                 </CardContent>
               </Card>
             </TabsContent>
-          </Tabs>
+              </Tabs>
+            </div>
+          </div>
         </>
       ) : (
         <Alert variant="destructive" data-testid="alert-error">

@@ -35,9 +35,9 @@ export default function Governance() {
     return (
       <>
         <DAppHeader />
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="container mx-auto px-4 pt-24 pb-8 max-w-4xl">
           <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
-            <Vote className="w-16 h-16 text-primary" data-testid="icon-governance" />
+            <Vote className="w-16 h-16 text-foreground/60" data-testid="icon-governance" />
             <div className="text-center">
               <h1 className="text-3xl font-bold mb-2" data-testid="text-title">Governance</h1>
               <p className="text-muted-foreground mb-6" data-testid="text-description">
@@ -79,18 +79,18 @@ export default function Governance() {
   return (
     <>
       <DAppHeader />
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-2">
-          <h1 className="text-4xl font-bold" data-testid="text-page-title">Governance</h1>
+      <div className="container mx-auto px-4 pt-24 pb-8 max-w-6xl">
+      <div className="mb-10">
+        <div className="flex items-center justify-between mb-3">
+          <h1 className="text-4xl font-bold tracking-tight" data-testid="text-page-title">Governance</h1>
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Connected:</span>
-            <code className="text-sm font-mono bg-muted px-2 py-1 rounded" data-testid="text-address">
+            <span className="text-sm text-muted-foreground font-medium">Connected:</span>
+            <code className="text-sm font-mono bg-muted px-3 py-1.5 rounded-md border" data-testid="text-address">
               {truncateAddress(address)}
             </code>
           </div>
         </div>
-        <p className="text-muted-foreground" data-testid="text-subtitle">
+        <p className="text-muted-foreground text-lg" data-testid="text-subtitle">
           Vote on S&P 500 shareholder proposals and earn rewards
         </p>
       </div>
@@ -115,7 +115,7 @@ export default function Governance() {
 
       {!isCorrectNetwork ? (
         <div className="flex flex-col items-center justify-center min-h-[40vh] gap-6">
-          <AlertCircle className="w-16 h-16 text-destructive" />
+          <AlertCircle className="w-16 h-16 text-foreground/60" />
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-2">Wrong Network</h2>
             <p className="text-muted-foreground mb-4">
@@ -129,74 +129,74 @@ export default function Governance() {
       ) : (
         <>
       <div className="grid gap-6 md:grid-cols-3 mb-8">
-        <Card data-testid="card-total-proposals">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Proposals</CardTitle>
+        <Card data-testid="card-total-proposals" className="border-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold uppercase tracking-wide">Total Proposals</CardTitle>
             <Vote className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold" data-testid="text-total-proposals">
+            <div className="text-3xl font-bold mb-1" data-testid="text-total-proposals">
               {governance.proposals.length}
             </div>
-            <p className="text-xs text-muted-foreground">Active governance votes</p>
+            <p className="text-xs text-muted-foreground font-medium">Active governance votes</p>
           </CardContent>
         </Card>
 
-        <Card data-testid="card-rewards-distributed">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Rewards</CardTitle>
+        <Card data-testid="card-rewards-distributed" className="border-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold uppercase tracking-wide">Total Rewards</CardTitle>
             <Award className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold" data-testid="text-total-rewards">
+            <div className="text-3xl font-bold mb-1" data-testid="text-total-rewards">
               {parseFloat(governance.totalRewards).toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground">mUSD distributed</p>
+            <p className="text-xs text-muted-foreground font-medium">mUSD distributed</p>
           </CardContent>
         </Card>
 
-        <Card data-testid="card-reward-rate">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Reward Rate</CardTitle>
+        <Card data-testid="card-reward-rate" className="border-2">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <CardTitle className="text-sm font-semibold uppercase tracking-wide">Reward Rate</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold" data-testid="text-reward-rate">
+            <div className="text-3xl font-bold mb-1" data-testid="text-reward-rate">
               {parseFloat(governance.rewardPerVote).toFixed(4)}
             </div>
-            <p className="text-xs text-muted-foreground">mUSD per vote</p>
+            <p className="text-xs text-muted-foreground font-medium">mUSD per vote</p>
           </CardContent>
         </Card>
       </div>
 
       {governance.config && (
-        <Card className="mb-8" data-testid="card-governance-config">
-          <CardHeader>
-            <CardTitle>Governance Configuration</CardTitle>
-            <CardDescription>Governor contract parameters</CardDescription>
+        <Card className="mb-8 border-2" data-testid="card-governance-config">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-semibold">Governance Configuration</CardTitle>
+            <CardDescription className="text-sm">Governor contract parameters</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
-            <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">Voting Delay:</span>
-              <span className="text-sm font-medium" data-testid="text-voting-delay">
+            <div className="flex justify-between items-center py-2 border-b">
+              <span className="text-sm text-muted-foreground font-medium">Voting Delay:</span>
+              <span className="text-sm font-semibold" data-testid="text-voting-delay">
                 {governance.config.votingDelay} blocks
               </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">Voting Period:</span>
-              <span className="text-sm font-medium" data-testid="text-voting-period">
+            <div className="flex justify-between items-center py-2 border-b">
+              <span className="text-sm text-muted-foreground font-medium">Voting Period:</span>
+              <span className="text-sm font-semibold" data-testid="text-voting-period">
                 {governance.config.votingPeriod} blocks
               </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">Quorum:</span>
-              <span className="text-sm font-medium" data-testid="text-quorum">
+            <div className="flex justify-between items-center py-2 border-b">
+              <span className="text-sm text-muted-foreground font-medium">Quorum:</span>
+              <span className="text-sm font-semibold" data-testid="text-quorum">
                 {parseFloat(governance.config.quorum).toFixed(4)} spDAO
               </span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-sm text-muted-foreground">Proposal Threshold:</span>
-              <span className="text-sm font-medium" data-testid="text-proposal-threshold">
+            <div className="flex justify-between items-center py-2 border-b">
+              <span className="text-sm text-muted-foreground font-medium">Proposal Threshold:</span>
+              <span className="text-sm font-semibold" data-testid="text-proposal-threshold">
                 {parseFloat(governance.config.proposalThreshold).toFixed(4)} spDAO
               </span>
             </div>
@@ -232,26 +232,26 @@ export default function Governance() {
           ) : (
             <div className="space-y-4">
               {governance.proposals.map((proposal) => (
-                <Card key={proposal.id} data-testid={`card-proposal-${proposal.id}`}>
-                  <CardHeader>
+                <Card key={proposal.id} data-testid={`card-proposal-${proposal.id}`} className="border-2">
+                  <CardHeader className="pb-4">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <CardTitle className="text-xl" data-testid={`text-proposal-ticker-${proposal.id}`}>
+                        <div className="flex items-center gap-2 mb-3">
+                          <CardTitle className="text-xl font-semibold" data-testid={`text-proposal-ticker-${proposal.id}`}>
                             {proposal.companyTicker} - Proposal #{proposal.shareholderProposalId}
                           </CardTitle>
                           {getStateBadge(proposal.state)}
                         </div>
-                        <CardDescription className="flex items-center gap-4">
-                          <span>
+                        <CardDescription className="flex items-center gap-4 text-sm">
+                          <span className="font-medium">
                             Vote: {proposal.voteFor ? 'FOR' : 'AGAINST'}
                           </span>
                           <span>•</span>
-                          <span>Total Votes: {parseFloat(proposal.totalVotes).toFixed(2)}</span>
+                          <span className="font-medium">Total Votes: {parseFloat(proposal.totalVotes).toFixed(2)}</span>
                           {proposal.hasVoted && (
                             <>
                               <span>•</span>
-                              <Badge variant="outline">
+                              <Badge variant="outline" className="font-semibold">
                                 <CheckCircle className="h-3 w-3 mr-1" />
                                 You Voted
                               </Badge>
@@ -294,7 +294,7 @@ export default function Governance() {
                                   }}
                                   data-testid={`button-vote-for-${proposal.id}`}
                                 >
-                                  <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                                  <CheckCircle className="mr-2 h-4 w-4" />
                                   Vote For
                                 </Button>
                                 <Button
@@ -306,7 +306,7 @@ export default function Governance() {
                                   }}
                                   data-testid={`button-vote-against-${proposal.id}`}
                                 >
-                                  <XCircle className="mr-2 h-4 w-4 text-red-500" />
+                                  <XCircle className="mr-2 h-4 w-4" />
                                   Vote Against
                                 </Button>
                               </div>
@@ -380,10 +380,10 @@ export default function Governance() {
         </TabsContent>
 
         <TabsContent value="create" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Create New Proposal</CardTitle>
-              <CardDescription>
+          <Card className="border-2">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg font-semibold">Create New Proposal</CardTitle>
+              <CardDescription className="text-sm">
                 Submit a new S&P 500 shareholder proposal for DAO voting
               </CardDescription>
             </CardHeader>

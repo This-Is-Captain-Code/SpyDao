@@ -24,7 +24,7 @@ export function TrendingStocks() {
       case 'ESG':
         return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
       case 'Executive Compensation':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
       case 'Board Changes':
         return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
       case 'Climate Action':
@@ -41,7 +41,7 @@ export function TrendingStocks() {
       'Technology': 'bg-blue-500',
       'Healthcare': 'bg-red-500',
       'Financial Services': 'bg-green-500',
-      'Consumer Discretionary': 'bg-purple-500',
+      'Consumer Discretionary': 'bg-gray-500',
       'Consumer Staples': 'bg-yellow-500',
     };
     return colors[sector] || 'bg-gray-500';

@@ -46,7 +46,7 @@ export default function Admin() {
     return (
       <>
         <DAppHeader />
-        <div className="container mx-auto px-4 py-8 max-w-4xl">
+        <div className="container mx-auto px-4 pt-24 pb-8 max-w-4xl">
           <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6">
             <Shield className="w-16 h-16 text-primary" data-testid="icon-admin" />
             <div className="text-center">
@@ -67,7 +67,7 @@ export default function Admin() {
   return (
     <>
       <DAppHeader />
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <div className="container mx-auto px-4 pt-24 pb-8 max-w-6xl">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-4xl font-bold" data-testid="text-page-title">Admin Panel</h1>
