@@ -29,7 +29,7 @@ export default function Home() {
             {/* Navigation Links */}
             <div className="flex items-center gap-4 text-sm lg:text-base">
               <a href="#" className="text-gray-900 dark:text-black hover:text-gray-700 dark:hover:text-gray-800 transition-colors">About us</a>
-              <a href="#" className="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg font-medium transition-colors">Dapp</a>
+              <a href="/vault" className="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg font-medium transition-colors">Dapp</a>
             </div>
           </div>
         </div>
