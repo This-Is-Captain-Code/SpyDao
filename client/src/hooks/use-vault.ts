@@ -63,21 +63,10 @@ export function useVault(provider: BrowserProvider | null, address: string | nul
         contracts.mockUSD.allowance(address, contracts.vault.target),
       ]);
 
-      console.log('🔍 DEBUG: Raw blockchain values:');
-      console.log('  - mUSD Balance (raw bigint):', mUSDBalance.toString());
-      console.log('  - spDAO Balance (raw bigint):', spDAOBalance.toString());
-
-      const formattedMUSDBalance = formatToken(mUSDBalance, 6);
-      const formattedSpDAOBalance = formatToken(spDAOBalance, 18);
-
-      console.log('🔍 DEBUG: After formatToken conversion:');
-      console.log('  - mUSD Balance (formatted with 6 decimals):', formattedMUSDBalance);
-      console.log('  - spDAO Balance (formatted with 18 decimals):', formattedSpDAOBalance);
-
       setData({
-        spDAOBalance: formattedSpDAOBalance,
+        spDAOBalance: formatToken(spDAOBalance, 18),
         spDAOBalanceRaw: spDAOBalance,
-        mUSDBalance: formattedMUSDBalance,
+        mUSDBalance: formatToken(mUSDBalance, 6),
         mUSDBalanceRaw: mUSDBalance,
         totalAssets: formatToken(totalAssets, 6),
         spyPrice: formatToken(spyPrice, 8),
@@ -289,6 +278,43 @@ export function useVault(provider: BrowserProvider | null, address: string | nul
     }
   }, [contractsWithSigner, toast, fetchVaultData]);
 
+  const completeKYC = useCallback(async () => {
+    if (!contractsWithSigner || !address) {
+      toast({
+        title: "Error",
+        description: "Please connect your wallet",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const contract = await contractsWithSigner.vault();
+      const tx = await contract.setComplianceStatus(address, true, false, "Self-approved for testing");
+      
+      toast({
+        title: "Transaction Submitted",
+        description: "Completing KYC verification...",
+      });
+
+      await tx.wait();
+      
+      toast({
+        title: "Success",
+        description: "KYC verification completed!",
+      });
+
+      await fetchVaultData();
+    } catch (err: any) {
+      console.error('Error completing KYC:', err);
+      toast({
+        title: "Error",
+        description: err.message || "Failed to complete KYC. You may not have admin permissions.",
+        variant: "destructive",
+      });
+    }
+  }, [contractsWithSigner, address, toast, fetchVaultData]);
+
   return {
     data,
     isLoading,
@@ -299,5 +325,6 @@ export function useVault(provider: BrowserProvider | null, address: string | nul
     deposit,
     withdraw,
     delegateVotes,
+    completeKYC,
   };
 }

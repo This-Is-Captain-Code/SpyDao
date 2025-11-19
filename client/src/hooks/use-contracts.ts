@@ -52,9 +52,7 @@ export function useContractsWithSigner(provider: BrowserProvider | null, address
 
 // Utility functions
 export const formatToken = (value: bigint, decimals: number = 18) => {
-  const result = formatUnits(value, decimals);
-  console.log(`🔍 DEBUG formatToken: ${value.toString()} with ${decimals} decimals → "${result}"`);
-  return result;
+  return formatUnits(value, decimals);
 };
 
 export const parseToken = (value: string, decimals: number = 18) => {

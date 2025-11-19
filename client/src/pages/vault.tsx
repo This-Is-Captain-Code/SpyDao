@@ -18,6 +18,10 @@ export default function Vault() {
   const [depositAmount, setDepositAmount] = useState('');
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [delegateAddress, setDelegateAddress] = useState('');
+  
+  // Only show KYC button to deployer/admin (set via env var or hardcoded for testing)
+  const DEPLOYER_ADDRESS = import.meta.env.VITE_DEPLOYER_ADDRESS?.toLowerCase() || '0x2bc3cfae99ea16c5abf55a7b5e36e43f3e3ec3ab';
+  const isAdmin = address?.toLowerCase() === DEPLOYER_ADDRESS;
 
   if (!address) {
     return (
@@ -88,7 +92,11 @@ export default function Vault() {
           <AlertDescription>
             {isBlocked && "Your address is blocked from vault operations."}
             {isPaused && "The vault is currently paused."}
-            {needsKYC && !isBlocked && !isPaused && "KYC verification required to deposit/withdraw. Contact admin for approval."}
+            {needsKYC && !isBlocked && !isPaused && (
+              isAdmin 
+                ? "KYC verification required. Use the 'Complete KYC' button below to approve yourself."
+                : "KYC verification required to deposit/withdraw. Contact admin for approval."
+            )}
           </AlertDescription>
         </Alert>
       )}
@@ -142,14 +150,7 @@ export default function Vault() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold" data-testid="text-musd-balance">
-                  {(() => {
-                    const displayValue = parseFloat(vault.data.mUSDBalance).toFixed(2);
-                    console.log('🔍 DEBUG vault.tsx display:');
-                    console.log('  - vault.data.mUSDBalance (string):', vault.data.mUSDBalance);
-                    console.log('  - parseFloat result:', parseFloat(vault.data.mUSDBalance));
-                    console.log('  - Final display value:', displayValue);
-                    return displayValue;
-                  })()}
+                  {parseFloat(vault.data.mUSDBalance).toFixed(2)}
                 </div>
                 <p className="text-xs text-muted-foreground">Available to deposit</p>
               </CardContent>
@@ -230,6 +231,17 @@ export default function Vault() {
                   <ArrowDown className="mr-2 h-4 w-4" />
                   Claim 1000 mUSD from Faucet
                 </Button>
+                {needsKYC && isAdmin && (
+                  <Button
+                    onClick={vault.completeKYC}
+                    variant="default"
+                    className="w-full"
+                    data-testid="button-complete-kyc"
+                  >
+                    <Users className="mr-2 h-4 w-4" />
+                    Complete KYC (Admin Only)
+                  </Button>
+                )}
                 <Button
                   onClick={vault.refresh}
                   variant="outline"

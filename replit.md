@@ -130,6 +130,12 @@ E2E tests verify:
   - `DATABASE_URL` is required for PostgreSQL connection
 
 ## Recent Changes
+- **2025-11-19**: KYC management and debug cleanup
+  - Removed all debug logging from balance display code
+  - Added admin-only "Complete KYC" button for self-approval during testing
+  - Implemented address-based admin gating (VITE_DEPLOYER_ADDRESS env var)
+  - Enhanced alert messaging to differentiate admin vs non-admin KYC guidance
+  - Fixed deposit button blocking issue caused by KYC requirements
 - **2025-11-19**: Network configuration and auto-switching features
   - Corrected Chain ID from 1729 to 123123 (Rayls Testnet)
   - Added automatic network detection and switching in wallet hook
