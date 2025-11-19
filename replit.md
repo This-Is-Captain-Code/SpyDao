@@ -22,7 +22,7 @@ SPY DAO is an on-chain governance system that democratizes index fund voting rig
 ### Smart Contracts
 - Solidity 0.8.20-0.8.25
 - OpenZeppelin contracts (ERC4626, Governor, AccessControl)
-- Deployed on Rayls Devnet (Chain ID: 1729)
+- Deployed on Rayls Testnet (Chain ID: 123123)
 - RPC URL: https://devnet-rpc.rayls.com
 
 ### Frontend
@@ -109,10 +109,12 @@ E2E tests verify:
 
 ## Deployment Information
 
-### Smart Contracts (Rayls Devnet)
-- **Network**: Rayls Devnet
-- **Chain ID**: 1729
+### Smart Contracts (Rayls Testnet)
+- **Network**: Rayls Testnet
+- **Chain ID**: 123123
 - **RPC URL**: https://devnet-rpc.rayls.com
+- **Explorer**: https://devnet-explorer.rayls.com
+- **Gas Token**: USDgas
 - **SPYVault**: 0x2181BaAAb16e8a4E08c7fFAB8DA1780B53eD05D2
 - **MockUSD**: 0xB6c7B1ef0947596FC2d8eBE577b97f34cBBD2Fb1
 - **MockSPYOracle**: 0x19a881AF139D665bD857Aedf6EDcBc0dBee52765
@@ -128,7 +130,10 @@ E2E tests verify:
   - `DATABASE_URL` is required for PostgreSQL connection
 
 ## Recent Changes
-- **2025-11-19**: Configuration fixes and verification
+- **2025-11-19**: Network configuration and auto-switching features
+  - Corrected Chain ID from 1729 to 123123 (Rayls Testnet)
+  - Added automatic network detection and switching in wallet hook
+  - Implemented "Switch Network" buttons on vault and governance pages
   - Fixed RPC URL from rpc.rayls.xyz to devnet-rpc.rayls.com
   - Added default fallback values for webhook service environment variables
   - Verified contract ABIs match deployed contracts

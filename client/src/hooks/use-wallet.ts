@@ -1,17 +1,17 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { BrowserProvider } from 'ethers';
 
-const RAYLS_DEVNET_CHAIN_ID = '0x6c1'; // 1729 in hex
+const RAYLS_DEVNET_CHAIN_ID = '0x1e0f3'; // 123123 in hex
 const RAYLS_DEVNET_PARAMS = {
   chainId: RAYLS_DEVNET_CHAIN_ID,
-  chainName: 'Rayls Devnet',
+  chainName: 'Rayls Testnet',
   nativeCurrency: {
-    name: 'Ethereum',
-    symbol: 'ETH',
+    name: 'USDgas',
+    symbol: 'USDgas',
     decimals: 18,
   },
   rpcUrls: ['https://devnet-rpc.rayls.com'],
-  blockExplorerUrls: [],
+  blockExplorerUrls: ['https://devnet-explorer.rayls.com'],
 };
 
 interface WalletState {

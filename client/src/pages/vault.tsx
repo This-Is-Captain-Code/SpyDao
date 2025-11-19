@@ -68,7 +68,7 @@ export default function Vault() {
         <Alert className="mb-6" variant="destructive" data-testid="alert-wrong-network">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription className="flex items-center justify-between">
-            <span>You're connected to the wrong network. Please switch to Rayls Devnet (Chain ID: 1729).</span>
+            <span>You're connected to the wrong network. Please switch to Rayls Testnet (Chain ID: 123123).</span>
             <Button 
               onClick={switchToRaylsDevnet} 
               variant="outline" 
@@ -99,10 +99,10 @@ export default function Vault() {
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-2">Wrong Network</h2>
             <p className="text-muted-foreground mb-4">
-              Please switch to Rayls Devnet to access the SPY Vault
+              Please switch to Rayls Testnet to access the SPY Vault
             </p>
             <Button onClick={switchToRaylsDevnet} data-testid="button-switch-network-main">
-              Switch to Rayls Devnet
+              Switch to Rayls Testnet
             </Button>
           </div>
         </div>
