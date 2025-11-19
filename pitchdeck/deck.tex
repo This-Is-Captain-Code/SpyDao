@@ -43,7 +43,7 @@
 
 % Title information
 \title{\textbf{SPY DAO}}
-\subtitle{An ERC-4626 Governance Vault for Index Investors on Rayls}
+\subtitle{ERC-4626 vault for index investors on Rayls}
 \author{Built for Rayls Hackathon}
 \date{\today}
 
@@ -58,10 +58,7 @@
     {\Huge\textcolor{white}{\textbf{SPY DAO}}}
     
     \vspace{0.5cm}
-    {\Large\textcolor{accentgold}{An ERC-4626 Governance Vault}}
-    
-    \vspace{0.3cm}
-    {\large\textcolor{white}{for Index Investors on Rayls}}
+    {\Large\textcolor{accentgold}{ERC-4626 vault for index investors on Rayls}}
     
     \vspace{1.5cm}
     \begin{tikzpicture}
@@ -75,21 +72,7 @@
 \end{frame}
 }
 
-% Slide: Hackathon Framing
-\begin{frame}{Hackathon Framing}
-\begin{itemize}
-  \item \textbf{Category:} Use of ERC-4626 yield-bearing vaults
-  \item \textbf{What we built:}
-    \begin{itemize}
-      \item An ERC-4626 vault (\texttt{SPYVault}) over a USD-like token on Rayls
-      \item A Governor (\texttt{SPYDAOGovernor}) that uses vault shares (\texttt{spDAO}) as voting power
-      \item End-to-end flow: faucet $\rightarrow$ deposit $\rightarrow$ vote on S\&P 500 proposals $\rightarrow$ claim rewards
-    \end{itemize}
-  \item \textbf{Goal:} Turn passive index fund capital into an active, compliant governance layer on the Rayls public chain
-\end{itemize}
-\end{frame}
-
-% Slide: Unlocking Trillions
+% Slide 1: Unlocking Trillions
 \begin{frame}{Unlocking Trillions}
 \vspace{0.5cm}
 \begin{center}
@@ -104,29 +87,14 @@
     \end{tikzpicture}
     
     \vspace{1cm}
-    {\Large\textcolor{mainblue}{\textbf{Zero voting power}}}
+    {\Large\textcolor{mainblue}{\textbf{Zero voting power for retail investors}}}
     
     \vspace{0.5cm}
     {\large Unlock corporate influence at scale}
 \end{center}
 \end{frame}
 
-% Slide: Principal–Agent Problem
-\begin{frame}{The Principal–Agent Problem in Index Funds}
-\begin{itemize}
-  \item Index funds hold \textbf{trillions} in assets, but ordinary SPY holders do not vote directly.
-  \item Large asset managers vote on behalf of millions of investors, with limited transparency.
-  \item There is no standard, compliant, on-chain way for SPY-style investors to coordinate how their voting rights are used.
-  \item As assets move onto Rayls, we need a \textbf{governance layer} that:
-    \begin{itemize}
-      \item Respects institutional compliance
-      \item Scales to millions of small holders
-      \item Feeds clean, auditable signals back to brokers / custodians
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
-% Slide: Participate in 500 Companies
+% Slide 2: Participate in 500 Companies
 \begin{frame}{Participate in 500 Companies}
 \vspace{0.2cm}
 \begin{center}
@@ -161,8 +129,8 @@
 \end{center}
 \end{frame}
 
-% Slide: Designed for Verified Share Purchases (roadmap)
-\begin{frame}{Designed for Verified Share Purchases}
+% Slide 3: Verified Share Purchases
+\begin{frame}{Verified Share Purchases}
 \vspace{0.5cm}
 \begin{center}
     \begin{tikzpicture}[scale=1.2]
@@ -181,14 +149,14 @@
     \end{tikzpicture}
     
     \vspace{0.5cm}
-    {\Large\textbf{On-chain oracle + API bridge (roadmap)}}
+    {\Large\textbf{On-chain oracle + API bridge}}
     
     \vspace{0.3cm}
-    {\large Mirror SPY execution with auditable proofs over time}
+    {\large Copy-trade the SPY with proof}
 \end{center}
 \end{frame}
 
-% Slide: ERC-4626 Governance
+% Slide 4: ERC-4626 Governance
 \begin{frame}{ERC-4626 Governance}
 \vspace{0.5cm}
 \begin{center}
@@ -210,95 +178,7 @@
 \end{center}
 \end{frame}
 
-% Slide: Architecture on Rayls (MVP)
-\begin{frame}{Architecture on Rayls (MVP)}
-\begin{columns}
-\begin{column}{0.55\textwidth}
-\begin{itemize}
-  \item \textbf{SPYVault (ERC-4626 + ERC20Votes)}
-    \begin{itemize}
-      \item Wraps MockUSD into \texttt{spDAO} shares
-      \item NAV = on-chain USD + synthetic SPY via oracle
-      \item Enforces KYC, sanctions, global pause
-      \item Time-delayed, capped broker withdrawals
-    \end{itemize}
-  \item \textbf{SPYDAOGovernor}
-    \begin{itemize}
-      \item Uses \texttt{spDAO} as voting token
-      \item Proposals represent S\&P 500 shareholder votes
-      \item Voters earn MockUSD for participation
-    \end{itemize}
-\end{itemize}
-\end{column}
-\begin{column}{0.45\textwidth}
-\begin{block}{Deployed on Rayls Devnet}
-\small
-\textbf{MockUSD:}\\
-0xB6c7B1ef0947...\\[0.1cm]
-\textbf{SPYVault:}\\
-0x2181BaAAb16e...\\[0.1cm]
-\textbf{SPYDAOGovernor:}\\
-0x4DD81784392E...
-\end{block}
-
-\vspace{0.4cm}
-\begin{center}
-\small \textit{Working prototype: faucet $\rightarrow$ deposit $\rightarrow$ vote $\rightarrow$ claim}
-\end{center}
-\end{column}
-\end{columns}
-\end{frame}
-
-% Slide: Compliance & Identity (Rayls-Aligned)
-\begin{frame}{Compliance \& Identity (Rayls-Aligned)}
-\begin{itemize}
-  \item \textbf{KYC gating} on all vault entry/exit:
-    \begin{itemize}
-      \item \texttt{isKYCCompleted[account]} required for deposit, withdraw, redeem
-    \end{itemize}
-  \item \textbf{Sanctions / block lists}:
-    \begin{itemize}
-      \item \texttt{isSanctionsBlocked[account]} prevents vault actions and transfers of \texttt{spDAO}
-    \end{itemize}
-  \item \textbf{Global circuit breaker}:
-    \begin{itemize}
-      \item \texttt{globalPause} controlled by \texttt{COMPLIANCE\_ROLE}
-    \end{itemize}
-  \item \textbf{Oracle risk controls}:
-    \begin{itemize}
-      \item \texttt{try/catch} around SPY price oracle
-      \item Rejects zero / absurd prices, falls back to on-chain USD only
-    \end{itemize}
-  \item \textbf{Supervised broker withdrawals}:
-    \begin{itemize}
-      \item 2-day delay, per-withdrawal caps, explicit schedule/execute/cancel flow
-    \end{itemize}
-\end{itemize}
-\end{frame}
-
-% Slide: Why This Belongs on Rayls
-\begin{frame}{Why This Belongs on Rayls}
-\begin{itemize}
-  \item \textbf{TradFi side (Privacy Nodes / Private Networks)}
-    \begin{itemize}
-      \item Real SPY positions and brokerage flows live on private Rayls infrastructure
-      \item Institutions manage tokenised SPY and execution off-chain / privately
-    \end{itemize}
-  \item \textbf{DeFi side (Public Chain)}
-    \begin{itemize}
-      \item SPY DAO exposes a public ERC-4626 vault with governance-enabled shares
-      \item DeFi users and institutions deposit, earn, and vote on S\&P 500 proposals
-    \end{itemize}
-  \item \textbf{Bridge}
-    \begin{itemize}
-      \item Governance signals aggregated on-chain
-      \item Designed to later feed into brokers via ZK-TLS and Rayls’ privacy stack
-    \end{itemize}
-  \item \textbf{Net effect:} A Rayls-native primitive that turns passive index exposure into an active, programmable governance layer.
-\end{itemize}
-\end{frame}
-
-% Slide: Deposits at Internet Scale
+% Slide 5: Deposits at Internet Scale
 \begin{frame}{Deposits at Internet Scale}
 \vspace{0.5cm}
 \begin{center}
@@ -318,7 +198,7 @@
 \end{center}
 \end{frame}
 
-% Slide: Delegated Voting Power
+% Slide 6: Delegated Voting Power
 \begin{frame}{Delegated Voting Power}
 \vspace{0.5cm}
 \begin{center}
@@ -349,7 +229,7 @@
 \end{center}
 \end{frame}
 
-% Slide: Aggregated Authority
+% Slide 7: Aggregated Authority
 \begin{frame}{Aggregated Authority}
 \vspace{0.5cm}
 \begin{center}
@@ -360,7 +240,7 @@
         \draw[fill=lightblue!30,draw=mainblue,ultra thick] (-4,0) rectangle (4,2);
         \node[mainblue] at (0,1) {\LARGE Collective Bargaining};
         
-        \draw[fill=accentgold,draw=mainblue,ultra thick] (-3,-1.5) rectangle (3,-0.5);
+        \draw[fill=accentgold,draw=mainblue,ultra thick] (-4,-1.5) rectangle (4,-0.5);
         \node[white] at (0,-1) {\Large Corporate Boardrooms Listen};
     \end{tikzpicture}
     
@@ -369,7 +249,7 @@
 \end{center}
 \end{frame}
 
-% Slide: Broker-Based Ownership
+% Slide 8: Broker-Based Ownership
 \begin{frame}{Broker-Based Ownership}
 \vspace{0.5cm}
 \begin{center}
@@ -392,7 +272,7 @@
 \end{center}
 \end{frame}
 
-% Slide: Earn Governance Yields
+% Slide 9: Earn Governance Yields
 \begin{frame}{Earn Governance Yields}
 \vspace{0.5cm}
 \begin{center}
@@ -416,7 +296,7 @@
 \end{center}
 \end{frame}
 
-% Slide: Index Investing + Control
+% Slide 10: Index Investing and Control
 \begin{frame}{Index Investing + Control}
 \vspace{0.5cm}
 \begin{center}
@@ -445,7 +325,7 @@
 \end{center}
 \end{frame}
 
-% Slide: Returning Voting Rights
+% Slide 11: Returning Voting Rights
 \begin{frame}{Returning Voting Rights to the People}
 \vspace{0.3cm}
 \begin{center}
@@ -467,57 +347,45 @@
 \end{center}
 \end{frame}
 
-% Slide: Compliant Global Economic Access
+% Slide 12: Compliant Global Economic Access
 \begin{frame}{Compliant Global Economic Access}
 \vspace{0.5cm}
 \begin{center}
     \begin{tikzpicture}
-        % World map style representation
-        \foreach \x in {-4,-2,0,2,4} {
-            \foreach \y in {-1,0,1} {
-                \fill[lightblue,opacity=0.7] (\x,\y) circle (0.3cm);
-            }
-        }
+        % KYC Flow
+        \node[rectangle,fill=lightblue,text=white,minimum width=3cm,minimum height=1.2cm,rounded corners] at (-4,0) {
+            \Large\faUser\ User
+        };
         
-        % Central node
-        \node[circle,fill=accentgold,text=white,minimum size=2.5cm] at (0,0) {
-            \begin{minipage}{2.2cm}
+        \draw[->,ultra thick,mainblue] (-2.5,0) -- (-1,0);
+        
+        \node[rectangle,fill=accentgold,text=white,minimum width=3.5cm,minimum height=1.2cm,rounded corners] at (0,0) {
+            \Large\faIdCard\ KYC Check
+        };
+        
+        \draw[->,ultra thick,mainblue] (1.75,0) -- (3.25,0);
+        
+        \node[rectangle,fill=mainblue,text=white,minimum width=3cm,minimum height=1.2cm,rounded corners] at (5,0) {
+            \Large\faCheckCircle\ Verified
+        };
+        
+        % Security features below
+        \node[rectangle,fill=lightblue!30,draw=mainblue,thick,minimum width=10cm,minimum height=2cm,rounded corners] at (0.5,-2.5) {
+            \begin{minipage}{9cm}
                 \centering
-                \Large\textbf{Secure}\\
-                \Large\textbf{Compliant}
+                \textcolor{mainblue}{\faShieldAlt\ \textbf{Regulatory Compliance}}\\
+                \vspace{0.2cm}
+                \textcolor{darkgray}{SEC-compliant • AML/KYC verified • Global access}
             \end{minipage}
         };
     \end{tikzpicture}
     
     \vspace{0.8cm}
-    {\Large\textbf{Financial inclusion meets corporate governance}}
+    {\Large\textbf{Secure, compliant, and accessible}}
     
     \vspace{0.3cm}
-    {\large Regulation-friendly global access}
+    {\large Regulation-friendly governance for everyone}
 \end{center}
-\end{frame}
-
-% Slide: Business Model & Long-Term Vision
-\begin{frame}{Business Model \& Long-Term Vision}
-\begin{itemize}
-  \item \textbf{Who pays?}
-    \begin{itemize}
-      \item Asset managers on Rayls who want SPY-style governance vaults
-      \item Activist campaigns or issuers who want to poll SPY DAO at scale
-      \item Protocols that integrate SPY DAO as a governance signal oracle
-    \end{itemize}
-  \item \textbf{Revenue streams}
-    \begin{itemize}
-      \item bps fee on AUM in the SPY DAO vault
-      \item Per-proposal / per-vote sponsorship fees
-      \item White-label governance vaults for institutions on Rayls Privacy Nodes
-    \end{itemize}
-  \item \textbf{Vision}
-    \begin{itemize}
-      \item Become the standard governance layer for tokenised index funds on Rayls
-      \item Extend from SPY to other indices (ESG, thematic, regional) as Rayls onboards more institutions
-    \end{itemize}
-\end{itemize}
 \end{frame}
 
 % Call to Action Slide
