@@ -1,4 +1,5 @@
 import axios from 'axios';
+import * as cheerio from 'cheerio';
 
 interface SPYHolding {
   symbol: string;
@@ -64,39 +65,71 @@ class SPYTrackerService {
     }
 
     try {
-      // Get SPY holdings from a free API
-      // Note: In production, you might need to use a paid financial data API
-      const response = await axios.get('https://api.spydex.io/v1/etf/SPY/holdings', {
-        timeout: 10000,
+      // Get S&P 500 weights from slickcharts.com
+      console.log('Fetching S&P 500 weights from slickcharts.com...');
+      const response = await axios.get('https://www.slickcharts.com/sp500', {
+        timeout: 30000,
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          'Accept-Language': 'en-US,en;q=0.5',
+          'Accept-Encoding': 'gzip, deflate, br',
+          'Connection': 'keep-alive',
+          'Upgrade-Insecure-Requests': '1',
+        }
       });
 
-      const holdings = response.data.holdings || [];
+      const $ = cheerio.load(response.data);
+      const holdings: SPYHolding[] = [];
       
-      // Calculate total market value and weights
-      const totalMarketValue = holdings.reduce((sum: number, holding: any) => sum + holding.market_value, 0);
-      
-      const normalizedHoldings: SPYHolding[] = holdings.map((holding: any) => ({
-        symbol: holding.symbol,
-        name: holding.name,
-        shares: holding.shares,
-        weight: (holding.market_value / totalMarketValue) * 100,
-        marketValue: holding.market_value,
-        sector: holding.sector || 'Other',
-      }));
+      // Parse the S&P 500 table
+      const table = $('table').first();
+      const rows = table.find('tbody tr');
 
+      rows.each((index, element) => {
+        const cells = $(element).find('td');
+        if (cells.length >= 4) {
+          const rank = $(cells[0]).text().trim();
+          const company = $(cells[1]).text().trim();
+          const symbol = $(cells[2]).text().trim();
+          const weightText = $(cells[3]).text().trim();
+          
+          // Parse the weight percentage
+          const weight = parseFloat(weightText.replace('%', ''));
+          
+          if (symbol && !isNaN(weight) && weight > 0) {
+            holdings.push({
+              symbol: symbol,
+              name: company,
+              shares: 0, // Will be calculated based on price
+              weight: weight,
+              marketValue: 0, // Will be calculated based on total capital
+              sector: 'Unknown', // Not provided by slickcharts, will need to fetch separately
+            });
+          }
+        }
+      });
+
+      // Calculate total market value (for consistency with existing interface)
+      const totalMarketValue = holdings.reduce((sum, holding) => sum + (holding.weight || 0), 0);
+      
       const composition: SPYComposition = {
-        totalMarketValue,
-        holdings: normalizedHoldings.sort((a, b) => b.weight - a.weight),
-        totalHoldings: normalizedHoldings.length,
+        totalMarketValue: totalMarketValue * 100_000, // Arbitrary value for interface compatibility
+        holdings: holdings.sort((a, b) => b.weight - a.weight),
+        totalHoldings: holdings.length,
         lastUpdated: new Date().toISOString(),
       };
+
+      console.log(`Successfully scraped ${holdings.length} S&P 500 holdings from slickcharts.com`);
+      console.log(`Top 5 holdings: ${holdings.slice(0, 5).map(h => `${h.symbol}:${h.weight.toFixed(2)}%`).join(', ')}`);
 
       this.setCache(cacheKey, composition);
       return composition;
     } catch (error) {
-      console.error('Error getting SPY composition from API:', error);
+      console.error('Error getting S&P 500 weights from slickcharts.com:', error);
       
-      // Fallback to mock data for development
+      // Fallback to mock data if scraping fails
+      console.log('Falling back to mock data...');
       return this.getMockSPYComposition();
     }
   }
