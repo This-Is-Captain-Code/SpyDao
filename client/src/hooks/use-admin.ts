@@ -4,6 +4,8 @@ import { useContracts, useContractsWithSigner, formatToken, parseToken } from '.
 import { useToast } from './use-toast';
 import { CONTRACTS } from '@/lib/contracts';
 
+import { id } from 'ethers';
+
 interface BrokerWithdrawalData {
   pendingAmount: string;
   pendingTime: string;
@@ -19,9 +21,10 @@ interface AdminData {
   brokerWithdrawal: BrokerWithdrawalData | null;
 }
 
-const ADMIN_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000000';
-const EXECUTOR_ROLE = '0x' + Buffer.from('EXECUTOR_ROLE').toString('hex').padEnd(64, '0');
-const COMPLIANCE_ROLE = '0x' + Buffer.from('COMPLIANCE_ROLE').toString('hex').padEnd(64, '0');
+// Role hashes (keccak256 of role names)
+const DEFAULT_ADMIN_ROLE = '0x0000000000000000000000000000000000000000000000000000000000000000';
+const EXECUTOR_ROLE = id('EXECUTOR_ROLE');
+const COMPLIANCE_ROLE = id('COMPLIANCE_ROLE');
 
 export function useAdmin(provider: BrowserProvider | null, address: string | null) {
   const [data, setData] = useState<AdminData | null>(null);
@@ -41,16 +44,22 @@ export function useAdmin(provider: BrowserProvider | null, address: string | nul
     setError(null);
 
     try {
-      // For simplicity, we'll check roles using hasRole from AccessControl
-      // In a production app, you'd add these functions to the ABI
+      // Check roles using hasRole from AccessControl
+      // Note: hasRole is part of AccessControl, which SPYVault inherits
       const [
         pendingAmount,
         pendingTime,
         maxWithdrawal,
+        hasAdminRole,
+        hasExecutorRole,
+        hasComplianceRole,
       ] = await Promise.all([
         contracts.vault.pendingWithdrawalAmount(),
         contracts.vault.pendingWithdrawalTime(),
         contracts.vault.maxSingleWithdrawal(),
+        contracts.vault.hasRole(DEFAULT_ADMIN_ROLE, address),
+        contracts.vault.hasRole(EXECUTOR_ROLE, address),
+        contracts.vault.hasRole(COMPLIANCE_ROLE, address),
       ]);
 
       const WITHDRAWAL_DELAY = 2 * 24 * 60 * 60; // 2 days in seconds
@@ -61,9 +70,9 @@ export function useAdmin(provider: BrowserProvider | null, address: string | nul
         : 0;
 
       setData({
-        hasAdminRole: true, // Simplified - assume deployer has all roles
-        hasExecutorRole: true,
-        hasComplianceRole: true,
+        hasAdminRole,
+        hasExecutorRole,
+        hasComplianceRole,
         brokerWithdrawal: {
           pendingAmount: formatToken(pendingAmount, 6),
           pendingTime: pendingTime.toString(),

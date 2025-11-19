@@ -85,6 +85,13 @@ export const SPYVault_ABI = [
   "function isSanctionsBlocked(address) view returns (bool)",
   "function globalPause() view returns (bool)",
   
+  // AccessControl functions
+  "function hasRole(bytes32 role, address account) view returns (bool)",
+  "function getRoleAdmin(bytes32 role) view returns (bytes32)",
+  "function grantRole(bytes32 role, address account)",
+  "function revokeRole(bytes32 role, address account)",
+  "function renounceRole(bytes32 role, address account)",
+
   // Admin functions
   "function setSyntheticHoldings(uint256 newBalance, string reason)",
   "function setIgnoreSynthetic(bool ignore)",

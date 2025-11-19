@@ -9,14 +9,22 @@ interface VaultData {
   mUSDBalance: string;
   mUSDBalanceRaw: bigint;
   totalAssets: string;
+  totalSupply: string;
+  totalSupplyRaw: bigint;
   spyPrice: string;
   syntheticShares: string;
+  syntheticSharesRaw: bigint;
   isKYCCompleted: boolean;
   isBlocked: boolean;
   isPaused: boolean;
   delegate: string;
   votingPower: string;
   mUSDAllowance: bigint;
+  // Calculated fields
+  sharePrice: string;
+  tvlUSD: string;
+  syntheticExposureUSD: string;
+  syntheticExposurePercent: string;
 }
 
 export function useVault(provider: BrowserProvider | null, address: string | null) {
@@ -41,6 +49,7 @@ export function useVault(provider: BrowserProvider | null, address: string | nul
         spDAOBalance,
         mUSDBalance,
         totalAssets,
+        totalSupply,
         spyPrice,
         syntheticShares,
         isKYC,
@@ -53,6 +62,7 @@ export function useVault(provider: BrowserProvider | null, address: string | nul
         contracts.vault.balanceOf(address),
         contracts.mockUSD.balanceOf(address),
         contracts.vault.totalAssets(),
+        contracts.vault.totalSupply(),
         contracts.oracle.latestAnswer(),
         contracts.vault.syntheticShareBalance(),
         contracts.vault.isKYCCompleted(address),
@@ -63,20 +73,50 @@ export function useVault(provider: BrowserProvider | null, address: string | nul
         contracts.mockUSD.allowance(address, contracts.vault.target),
       ]);
 
+      // Calculate share price (totalAssets / totalSupply)
+      const sharePriceRaw = totalSupply > 0n 
+        ? (totalAssets * BigInt(1e18)) / totalSupply 
+        : BigInt(1e6); // Default to 1:1 if no supply
+      const sharePrice = formatToken(sharePriceRaw, 6);
+
+      // Calculate TVL in USD
+      const tvlBigInt = totalAssets; // totalAssets is already in mUSD (6 decimals)
+      const tvlUSD = formatToken(tvlBigInt, 6);
+
+      // Calculate synthetic exposure in USD
+      const spyPriceBigInt = spyPrice; // 8 decimals
+      // syntheticShares is whole shares (no decimals), spyPrice is 8 decimals
+      // Result should be in mUSD (6 decimals)
+      const syntheticExposureBigInt = (syntheticShares * spyPriceBigInt) / BigInt(1e8);
+      const syntheticExposureUSD = formatToken(syntheticExposureBigInt, 6);
+
+      // Calculate synthetic exposure as percentage of TVL
+      const syntheticExposurePercent = totalAssets > 0n
+        ? ((syntheticExposureBigInt * BigInt(10000)) / totalAssets).toString() / 100
+        : '0';
+
       setData({
         spDAOBalance: formatToken(spDAOBalance, 18),
         spDAOBalanceRaw: spDAOBalance,
         mUSDBalance: formatToken(mUSDBalance, 6),
         mUSDBalanceRaw: mUSDBalance,
         totalAssets: formatToken(totalAssets, 6),
+        totalSupply: formatToken(totalSupply, 18),
+        totalSupplyRaw: totalSupply,
         spyPrice: formatToken(spyPrice, 8),
         syntheticShares: formatToken(syntheticShares, 0),
+        syntheticSharesRaw: syntheticShares,
         isKYCCompleted: isKYC,
         isBlocked,
         isPaused,
         delegate: delegate.toLowerCase() === address.toLowerCase() ? '' : delegate,
         votingPower: formatToken(votingPower, 18),
         mUSDAllowance: allowance,
+        // Calculated fields
+        sharePrice,
+        tvlUSD,
+        syntheticExposureUSD,
+        syntheticExposurePercent: syntheticExposurePercent.toString(),
       });
     } catch (err: any) {
       console.error('Error fetching vault data:', err);

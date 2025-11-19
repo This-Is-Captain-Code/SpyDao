@@ -169,6 +169,41 @@ export default function Governance() {
         </Card>
       </div>
 
+      {governance.config && (
+        <Card className="mb-8" data-testid="card-governance-config">
+          <CardHeader>
+            <CardTitle>Governance Configuration</CardTitle>
+            <CardDescription>Governor contract parameters</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-4 md:grid-cols-2">
+            <div className="flex justify-between">
+              <span className="text-sm text-muted-foreground">Voting Delay:</span>
+              <span className="text-sm font-medium" data-testid="text-voting-delay">
+                {governance.config.votingDelay} blocks
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-muted-foreground">Voting Period:</span>
+              <span className="text-sm font-medium" data-testid="text-voting-period">
+                {governance.config.votingPeriod} blocks
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-muted-foreground">Quorum:</span>
+              <span className="text-sm font-medium" data-testid="text-quorum">
+                {parseFloat(governance.config.quorum).toFixed(4)} spDAO
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-muted-foreground">Proposal Threshold:</span>
+              <span className="text-sm font-medium" data-testid="text-proposal-threshold">
+                {parseFloat(governance.config.proposalThreshold).toFixed(4)} spDAO
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Tabs defaultValue="proposals" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="proposals" data-testid="tab-proposals">Proposals</TabsTrigger>
@@ -227,7 +262,7 @@ export default function Governance() {
                     </div>
                   </CardHeader>
 
-                  <CardFooter className="flex gap-2">
+                  <CardFooter className="flex gap-2 flex-wrap">
                     {proposal.state === ProposalState.Active && !proposal.hasVoted && (
                       <Dialog>
                         <DialogTrigger asChild>
@@ -289,6 +324,23 @@ export default function Governance() {
                           </div>
                         </DialogContent>
                       </Dialog>
+                    )}
+
+                    {proposal.state === ProposalState.Succeeded && !proposal.executed && (
+                      <Button
+                        onClick={() => governance.executeProposal(
+                          proposal.id,
+                          proposal.companyTicker,
+                          proposal.shareholderProposalId,
+                          proposal.voteFor,
+                          proposal.description // Use the EXACT original description from ProposalCreated event
+                        )}
+                        variant="default"
+                        data-testid={`button-execute-${proposal.id}`}
+                      >
+                        <CheckCircle className="mr-2 h-4 w-4" />
+                        Execute Proposal
+                      </Button>
                     )}
 
                     {parseFloat(proposal.availableReward) > 0 && !proposal.hasClaimed && (
