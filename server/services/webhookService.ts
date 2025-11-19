@@ -28,6 +28,7 @@ interface WithdrawalExecutedEvent {
   transactionHash: string;
   user: string;
   assets: string;
+  shares: string;
   blockNumber: number;
   timestamp: number;
 }
@@ -37,16 +38,24 @@ class WebhookService {
   private db: ReturnType<typeof drizzle>;
   private provider: ethers.Provider | null = null;
   private contract: ethers.Contract | null = null;
+  private processedTransactions: Set<string> = new Set();
+  private isListening: boolean = false;
+  private reconnectAttempts: number = 0;
+  private maxReconnectAttempts: number = 5;
+  private maxProcessedTransactions: number = 1000; // Keep last 1000 tx hashes
 
   constructor() {
+    console.log('🔧 WebhookService constructor called');
     this.rebalancer = new PortfolioRebalancer();
     
     // Initialize database connection
     const pool = new Pool({ connectionString: process.env.DATABASE_URL });
     this.db = drizzle(pool);
     
+    console.log('🔧 About to call initializeEthereum()');
     // Initialize Ethereum connection
     this.initializeEthereum();
+    console.log('🔧 Finished calling initializeEthereum()');
   }
 
   private initializeEthereum() {
@@ -66,15 +75,199 @@ class WebhookService {
         "event Transfer(address indexed from, address indexed to, uint256 value)",
         "event Deposit(address indexed caller, address indexed owner, uint256 assets, uint256 shares)",
         "event Withdraw(address indexed caller, address indexed receiver, address indexed owner, uint256 assets, uint256 shares)",
-        "event BrokerWithdrawalScheduled(uint256 amount, uint256 timestamp)"
+        "event ScheduledBrokerWithdrawal(uint256 amount, uint256 executeAfter)"
       ];
       
       this.contract = new ethers.Contract(contractAddress, contractABI, this.provider);
       
       console.log('Ethereum connection initialized');
+      
+      // Start listening for blockchain events
+      this.startListening();
     } catch (error) {
       console.error('Error initializing Ethereum connection:', error);
     }
+  }
+
+  /**
+   * Start listening to blockchain events in real-time
+   */
+  async startListening(): Promise<void> {
+    if (!this.contract || !this.provider) {
+      console.warn('Cannot start listening: Ethereum connection not initialized');
+      return;
+    }
+
+    if (this.isListening) {
+      console.log('Already listening to blockchain events');
+      return;
+    }
+
+    try {
+      console.log('🎧 Starting blockchain event listener...');
+      this.isListening = true;
+      this.reconnectAttempts = 0;
+
+      // Listen for Deposit events
+      this.contract.on('Deposit', async (caller, owner, assets, shares, event) => {
+        try {
+          const txHash = event.transactionHash;
+          
+          // Skip if already processed
+          if (this.processedTransactions.has(txHash)) {
+            console.log(`Skipping duplicate deposit: ${txHash}`);
+            return;
+          }
+
+          console.log(`📥 Deposit event detected: ${txHash}`);
+          
+          const block = await event.getBlock();
+          
+          await this.processDepositEvent({
+            transactionHash: txHash,
+            user: owner,
+            assets: assets.toString(),
+            shares: shares.toString(),
+            blockNumber: event.blockNumber,
+            timestamp: block.timestamp,
+          });
+
+          this.processedTransactions.add(txHash);
+          this.pruneProcessedTransactions();
+        } catch (error) {
+          console.error('Error processing deposit event:', error);
+        }
+      });
+
+      // Listen for Withdraw events (executed withdrawals)
+      this.contract.on('Withdraw', async (caller, receiver, owner, assets, shares, event) => {
+        try {
+          const txHash = event.transactionHash;
+          
+          // Skip if already processed
+          if (this.processedTransactions.has(txHash)) {
+            console.log(`Skipping duplicate withdrawal: ${txHash}`);
+            return;
+          }
+
+          console.log(`📤 Withdrawal event detected: ${txHash}`);
+          
+          const block = await event.getBlock();
+          
+          await this.processWithdrawalExecutedEvent({
+            transactionHash: txHash,
+            user: owner,
+            assets: assets.toString(),
+            shares: shares.toString(), // Include actual shares from event
+            blockNumber: event.blockNumber,
+            timestamp: block.timestamp,
+          });
+
+          this.processedTransactions.add(txHash);
+          this.pruneProcessedTransactions();
+        } catch (error) {
+          console.error('Error processing withdrawal event:', error);
+        }
+      });
+
+      // Listen for ScheduledBrokerWithdrawal events
+      this.contract.on('ScheduledBrokerWithdrawal', async (amount, executeAfter, event) => {
+        try {
+          const txHash = event.transactionHash;
+          
+          if (this.processedTransactions.has(txHash)) {
+            console.log(`Skipping duplicate broker withdrawal: ${txHash}`);
+            return;
+          }
+
+          const amountUSD = ethers.formatUnits(amount, 6);
+          const executionDate = new Date(Number(executeAfter) * 1000);
+          
+          console.log(`🏦 Broker withdrawal scheduled: ${txHash}`);
+          console.log(`   Amount: ${amountUSD} mUSD`);
+          console.log(`   Execution: ${executionDate.toISOString()}`);
+          
+          // Broker withdrawals are administrative (vault → Alpaca broker)
+          // They don't go through the user withdrawal schema
+          // Just track for monitoring and auditing purposes
+          
+          this.processedTransactions.add(txHash);
+          this.pruneProcessedTransactions();
+        } catch (error) {
+          console.error('Error processing broker withdrawal event:', error);
+        }
+      });
+
+      // Handle provider errors and reconnection
+      this.provider.on('error', (error) => {
+        console.error('Provider error:', error);
+        this.handleDisconnection();
+      });
+
+      console.log('✅ Blockchain event listener active');
+      console.log('   - Listening for Deposit events');
+      console.log('   - Listening for Withdraw events');
+      console.log('   - Listening for ScheduledBrokerWithdrawal events');
+
+    } catch (error) {
+      console.error('Error starting event listener:', error);
+      this.isListening = false;
+      this.scheduleReconnect();
+    }
+  }
+
+  /**
+   * Prune processed transactions cache to prevent memory leaks
+   */
+  private pruneProcessedTransactions(): void {
+    if (this.processedTransactions.size > this.maxProcessedTransactions) {
+      // Convert to array, remove oldest entries, convert back to Set
+      const entries = Array.from(this.processedTransactions);
+      const toKeep = entries.slice(-this.maxProcessedTransactions);
+      this.processedTransactions = new Set(toKeep);
+      console.log(`Pruned processed transactions cache (kept ${toKeep.length} most recent)`);
+    }
+  }
+
+  /**
+   * Stop listening to blockchain events
+   */
+  stopListening(): void {
+    if (this.contract) {
+      this.contract.removeAllListeners();
+      console.log('Stopped listening to blockchain events');
+    }
+    this.isListening = false;
+  }
+
+  /**
+   * Handle provider disconnection and attempt reconnection
+   */
+  private handleDisconnection(): void {
+    console.warn('Blockchain connection lost');
+    this.isListening = false;
+    this.stopListening();
+    this.scheduleReconnect();
+  }
+
+  /**
+   * Schedule reconnection attempt with exponential backoff
+   */
+  private scheduleReconnect(): void {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      console.error(`Max reconnection attempts (${this.maxReconnectAttempts}) reached. Manual intervention required.`);
+      return;
+    }
+
+    this.reconnectAttempts++;
+    const delay = Math.min(1000 * Math.pow(2, this.reconnectAttempts), 30000); // Max 30 seconds
+    
+    console.log(`Reconnection attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts} in ${delay/1000}s...`);
+    
+    setTimeout(() => {
+      console.log('Attempting to reconnect to blockchain...');
+      this.initializeEthereum();
+    }, delay);
   }
 
   async processDepositEvent(event: DepositEvent): Promise<void> {
@@ -140,17 +333,32 @@ class WebhookService {
       // Share price when the withdrawal was executed
       const withdrawalAmount = parseFloat(ethers.formatUnits(event.assets, 6));
       
-      // Store the withdrawal execution
-      await this.db.update(withdrawals)
-        .set({ 
+      // SPYVault has immediate withdrawals (no scheduling step)
+      // Upsert the withdrawal record to handle both new and duplicate events
+      await this.db.insert(withdrawals).values({
+        transactionHash: event.transactionHash,
+        userAddress: event.user,
+        assets: event.assets,
+        shares: event.shares,
+        executedTimestamp: new Date(event.timestamp * 1000),
+        scheduledTimestamp: null, // NULL for immediate withdrawals (no scheduling step)
+        pending: false,
+        processed: false, // Will be set to true after rebalancing
+      }).onConflictDoUpdate({
+        target: withdrawals.transactionHash,
+        set: {
           executedTimestamp: new Date(event.timestamp * 1000),
-          pending: false,
-          processed: true,
-        })
-        .where(sql`${withdrawals.transactionHash} = ${event.transactionHash}`);
+          processed: false, // Reset to allow reprocessing
+        },
+      });
 
       // Rebalance after selling to fund withdrawal
       await this.rebalancer.handleWithdrawal(withdrawalAmount);
+
+      // Mark as processed after successful rebalancing
+      await this.db.update(withdrawals)
+        .set({ processed: true })
+        .where(sql`${withdrawals.transactionHash} = ${event.transactionHash}`);
 
       console.log(`Withdrawal executed and rebalanced: ${event.transactionHash}`);
     } catch (error) {

@@ -130,6 +130,16 @@ E2E tests verify:
   - `DATABASE_URL` is required for PostgreSQL connection
 
 ## Recent Changes
+- **2025-11-19**: Real-time blockchain event listening system
+  - Implemented WebhookService event listeners using contract.on() for real-time blockchain monitoring
+  - Added listeners for Deposit, Withdraw, and ScheduledBrokerWithdrawal events
+  - Fixed ethers v6 event property access (event.transactionHash, not event.log.transactionHash)
+  - Implemented duplicate event detection with bounded cache (1000 transactions)
+  - Added automatic reconnection logic with exponential backoff (max 5 attempts)
+  - Deposit events trigger PortfolioRebalancer.handleNewCapital() for immediate SPY-mirroring trades
+  - Withdraw events trigger PortfolioRebalancer.handleWithdrawal() for portfolio rebalancing
+  - Broker withdrawal events logged for monitoring (administrative actions, separate from user withdrawals)
+  - All events properly stored in database with upsert logic to handle duplicate processing
 - **2025-11-19**: KYC management and debug cleanup
   - Removed all debug logging from balance display code
   - Added admin-only "Complete KYC" button for self-approval during testing
