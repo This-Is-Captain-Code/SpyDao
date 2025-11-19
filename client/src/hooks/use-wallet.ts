@@ -1,10 +1,25 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { BrowserProvider } from 'ethers';
 
+const RAYLS_DEVNET_CHAIN_ID = '0x6c1'; // 1729 in hex
+const RAYLS_DEVNET_PARAMS = {
+  chainId: RAYLS_DEVNET_CHAIN_ID,
+  chainName: 'Rayls Devnet',
+  nativeCurrency: {
+    name: 'Ethereum',
+    symbol: 'ETH',
+    decimals: 18,
+  },
+  rpcUrls: ['https://devnet-rpc.rayls.com'],
+  blockExplorerUrls: [],
+};
+
 interface WalletState {
   address: string | null;
   isConnecting: boolean;
   error: string | null;
+  chainId: string | null;
+  isCorrectNetwork: boolean;
 }
 
 export function useWallet() {
@@ -12,6 +27,8 @@ export function useWallet() {
     address: null,
     isConnecting: false,
     error: null,
+    chainId: null,
+    isCorrectNetwork: false,
   });
 
   const provider = useMemo(() => {
@@ -27,9 +44,16 @@ export function useWallet() {
 
       const provider = new BrowserProvider(window.ethereum);
       const accounts = await provider.listAccounts();
+      const network = await provider.getNetwork();
+      const chainId = '0x' + network.chainId.toString(16);
       
       if (accounts.length > 0) {
-        setState(prev => ({ ...prev, address: accounts[0].address }));
+        setState(prev => ({ 
+          ...prev, 
+          address: accounts[0].address,
+          chainId,
+          isCorrectNetwork: chainId === RAYLS_DEVNET_CHAIN_ID,
+        }));
       }
     } catch (error) {
       console.error('Error checking wallet connection:', error);
@@ -47,7 +71,12 @@ export function useWallet() {
       }
     };
 
-    const handleChainChanged = () => {
+    const handleChainChanged = (chainId: string) => {
+      setState(prev => ({ 
+        ...prev, 
+        chainId,
+        isCorrectNetwork: chainId === RAYLS_DEVNET_CHAIN_ID,
+      }));
       window.location.reload();
     };
 
@@ -78,12 +107,16 @@ export function useWallet() {
     try {
       const provider = new BrowserProvider(window.ethereum);
       const accounts = await provider.send('eth_requestAccounts', []);
+      const network = await provider.getNetwork();
+      const chainId = '0x' + network.chainId.toString(16);
       
       if (accounts.length > 0) {
         setState({
           address: accounts[0],
           isConnecting: false,
           error: null,
+          chainId,
+          isCorrectNetwork: chainId === RAYLS_DEVNET_CHAIN_ID,
         });
       }
     } catch (error: any) {
@@ -91,7 +124,36 @@ export function useWallet() {
         address: null,
         isConnecting: false,
         error: error.message || 'Failed to connect wallet',
+        chainId: null,
+        isCorrectNetwork: false,
       });
+    }
+  };
+
+  const switchToRaylsDevnet = async () => {
+    if (!window.ethereum) {
+      return;
+    }
+
+    try {
+      await window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: RAYLS_DEVNET_CHAIN_ID }],
+      });
+    } catch (switchError: any) {
+      // This error code indicates that the chain has not been added to MetaMask.
+      if (switchError.code === 4902) {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [RAYLS_DEVNET_PARAMS],
+          });
+        } catch (addError) {
+          console.error('Error adding Rayls Devnet:', addError);
+        }
+      } else {
+        console.error('Error switching to Rayls Devnet:', switchError);
+      }
     }
   };
 
@@ -100,6 +162,8 @@ export function useWallet() {
       address: null,
       isConnecting: false,
       error: null,
+      chainId: null,
+      isCorrectNetwork: false,
     });
   };
 
@@ -111,9 +175,12 @@ export function useWallet() {
     address: state.address,
     isConnecting: state.isConnecting,
     error: state.error,
+    chainId: state.chainId,
+    isCorrectNetwork: state.isCorrectNetwork,
     provider,
     connectWallet,
     disconnectWallet,
+    switchToRaylsDevnet,
     truncateAddress,
   };
 }

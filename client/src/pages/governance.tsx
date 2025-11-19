@@ -18,7 +18,7 @@ import { Link } from 'wouter';
 import { DAppHeader } from '@/components/DAppHeader';
 
 export default function Governance() {
-  const { address, provider, connectWallet, truncateAddress } = useWallet();
+  const { address, provider, connectWallet, truncateAddress, isCorrectNetwork, switchToRaylsDevnet } = useWallet();
   const governance = useGovernance(provider, address);
 
   const [newProposal, setNewProposal] = useState({
@@ -95,6 +95,39 @@ export default function Governance() {
         </p>
       </div>
 
+      {!isCorrectNetwork && (
+        <Alert className="mb-6" variant="destructive" data-testid="alert-wrong-network">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription className="flex items-center justify-between">
+            <span>You're connected to the wrong network. Please switch to Rayls Devnet (Chain ID: 1729).</span>
+            <Button 
+              onClick={switchToRaylsDevnet} 
+              variant="outline" 
+              size="sm"
+              className="ml-4"
+              data-testid="button-switch-network"
+            >
+              Switch Network
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {!isCorrectNetwork ? (
+        <div className="flex flex-col items-center justify-center min-h-[40vh] gap-6">
+          <AlertCircle className="w-16 h-16 text-destructive" />
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-2">Wrong Network</h2>
+            <p className="text-muted-foreground mb-4">
+              Please switch to Rayls Devnet to access governance features
+            </p>
+            <Button onClick={switchToRaylsDevnet} data-testid="button-switch-network-main">
+              Switch to Rayls Devnet
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <>
       <div className="grid gap-6 md:grid-cols-3 mb-8">
         <Card data-testid="card-total-proposals">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -375,6 +408,8 @@ export default function Governance() {
           </Card>
         </TabsContent>
       </Tabs>
+      </>
+      )}
       </div>
     </>
   );
