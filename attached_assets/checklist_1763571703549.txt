@@ -1,0 +1,426 @@
+3. Master integration checklist (everything across all contracts)
+
+Here’s the cleaned up, repo-friendly master list you can just send to your friend. This assumes:
+
+Vault: SPYVault
+
+Governor: SPYDAOGovernor
+
+Oracle: ISPYPublicOracle / MockSPYOracle
+
+Asset: MockUSD
+
+Frontend uses wagmi/viem/ethers (whatever they picked), + React.
+
+3.1. Global config & plumbing
+
+ Contract config file (e.g. contracts.ts):
+
+SPY_VAULT_ADDRESS
+
+SPY_GOVERNOR_ADDRESS
+
+ORACLE_ADDRESS (mock or real)
+
+MOCK_USD_ADDRESS
+
+ABIs for:
+
+SPYVault
+
+SPYDAOGovernor
+
+ISPYPublicOracle / MockSPYOracle
+
+MockUSD (or generic ERC20)
+
+ Chain / RPC config:
+
+Chain ID, RPC URL, explorer URL in one place.
+
+ Wallet wiring:
+
+Provider + signer/walletClient.
+
+Connect / disconnect UI.
+
+Network guard: show banner & disable writes if on wrong chain.
+
+ Global tx helper:
+
+A wrapper for all write calls to show:
+
+“Confirm in wallet”
+
+“Tx submitted” + explorer link
+
+“Tx confirmed / failed”
+
+3.2. Oracle + price
+
+Contracts: ISPYPublicOracle, MockSPYOracle
+
+ Hook useSpyPrice():
+
+Calls latestAnswer().
+
+Converts from 8 decimals → number (USD).
+
+Handles failures (show “Price unavailable”).
+
+ If using MockSPYOracle:
+
+setPrice(newPrice) action (scaled by 1e8).
+
+Dev-only panel:
+
+Input: USD price
+
+Button: “Set mock SPY price”
+
+Optional PriceUpdated event subscription → refetch price.
+
+ UI:
+
+Global SPY price display.
+
+Use for vault position valuation (show $ value).
+
+3.3. Vault (SPYVault) + underlying (MockUSD)
+
+Contracts: SPYVault, MockUSD
+
+Reads:
+
+ useVaultAsset():
+
+From SPYVault: asset() → ERC20 address (MockUSD in dev).
+
+From MockUSD: symbol, decimals (6), name.
+
+ useVaultStats():
+
+From SPYVault:
+
+totalAssets()
+
+totalSupply()
+
+Derived:
+
+sharePrice = totalAssets / totalSupply (if > 0)
+
+TVL (display as USD if asset is USD-like).
+
+ useUserVaultPosition(account):
+
+spDaoBalance = SPYVault.balanceOf(account)
+
+vaultAssets = SPYVault.convertToAssets(spDaoBalance)
+
+underlyingBalance = MockUSD.balanceOf(account)
+
+ useSyntheticExposure():
+
+From SPYVault:
+
+spyOracle()
+
+syntheticShareBalance
+
+ignoreSynthetic
+
+on-chain USD balance: IERC20(asset()).balanceOf(vault)
+
+From oracle:
+
+latestAnswer() → SPY price
+
+Derived:
+
+Synthetic USD value
+
+Breakdown: on-chain vs synthetic vs total.
+
+ useBrokerWithdrawalState():
+
+From SPYVault:
+
+BROKER_WALLET
+
+pendingWithdrawalAmount
+
+pendingWithdrawalTime
+
+maxSingleWithdrawal
+
+Derived:
+
+canExecuteNow, timeRemaining.
+
+ useComplianceStatus(account):
+
+From SPYVault:
+
+isKYCCompleted(account)
+
+isSanctionsBlocked(account)
+
+globalPause
+
+ useVaultRoles(account):
+
+From SPYVault/AccessControl:
+
+hasRole(EXECUTOR_ROLE, account)
+
+hasRole(COMPLIANCE_ROLE, account)
+
+hasRole(DEFAULT_ADMIN_ROLE, account)
+
+ (Optional) useVaultCaps(account):
+
+maxDeposit(account), maxWithdraw(account), etc.
+
+Writes – user flows:
+
+ Deposit/mint:
+
+Underlying approve(vault, amount) then:
+
+SPYVault.deposit(assets, receiver = user)
+or
+
+SPYVault.mint(shares, receiver = user)
+
+Pre-checks:
+
+globalPause == false
+
+isKYCCompleted(user) == true
+
+isSanctionsBlocked(user) == false
+
+ Withdraw/redeem:
+
+SPYVault.withdraw(assets, receiver = user, owner = user)
+or
+
+SPYVault.redeem(shares, receiver = user, owner = user)
+
+Same compliance / pause checks.
+
+ Vote delegation (ERC20Votes):
+
+SPYVault.delegate(to):
+
+Quick “delegate to self” button.
+
+Advanced: delegate to custom address.
+
+Writes – synthetic/broker/compliance/admin:
+
+ If EXECUTOR_ROLE:
+
+setSyntheticHoldings(newBalance, reason)
+
+scheduleBrokerWithdrawal(assets)
+
+executeBrokerWithdrawal()
+
+ If DEFAULT_ADMIN_ROLE:
+
+setIgnoreSynthetic(ignore)
+
+setMaxSingleWithdrawal(newMax)
+
+cancelWithdrawal()
+
+ If COMPLIANCE_ROLE:
+
+setComplianceStatus(account, kycCompleted, blocked, reason)
+
+setGlobalPause(paused)
+
+MockUSD extras:
+
+ Dev faucet UI:
+
+Button calling MockUSD.faucet() to get 1000 mUSD.
+
+ Optional admin mint:
+
+MockUSD.mint(to, amount) dev-only.
+
+3.4. Governor (SPYDAOGovernor)
+
+Reads:
+
+ useGovernorConfig():
+
+votingDelay()
+
+votingPeriod()
+
+quorum()
+
+proposalThreshold() (0)
+
+ useRewardConfig():
+
+From SPYDAOGovernor:
+
+REWARD_TOKEN()
+
+REWARD_PER_VOTE()
+
+totalRewardsDistributed()
+
+From REWARD_TOKEN:
+
+balanceOf(governor) → reward pool size.
+
+ useSp500Proposal(proposalId):
+
+From SPYDAOGovernor:
+
+sp500Proposals(proposalId) struct
+
+state(proposalId)
+
+proposalSnapshot(proposalId)
+
+proposalDeadline(proposalId)
+
+sp500Proposals(proposalId).executed
+
+ useProposals():
+
+Either:
+
+From a backend/API indexing ProposalCreated events
+
+Or direct event scan from RPC.
+
+Returns list of proposals for proposals page.
+
+ useVotingPower(account, proposalId):
+
+snapshot = proposalSnapshot(proposalId)
+
+getVotes(account, snapshot).
+
+ useHasVoted(proposalId, account):
+
+hasVoted(proposalId, account).
+
+ useAvailableRewards(proposalId, user):
+
+availableRewards(proposalId, user).
+
+ useHasClaimedReward(proposalId, user):
+
+hasClaimedReward(proposalId, user).
+
+Writes:
+
+ Create proposal:
+
+proposeSP500Vote(companyTicker, shareholderProposalId, voteFor, description)
+
+UI form:
+
+Ticker
+
+External proposal ID
+
+DAO recommendation (for/against)
+
+Description
+
+Store (proposalId, description) off-chain so you can rebuild descriptionHash for execute.
+
+ Vote:
+
+castVote(proposalId, support) (0=against,1=for,2=abstain)
+or
+
+castVoteWithReason(proposalId, support, reason).
+
+UI:
+
+Buttons for support options.
+
+Optional text box for reason.
+
+Disable if:
+
+state != Active
+
+user has already voted
+
+votingPower == 0
+
+ Claim rewards:
+
+claimRewards(proposalId):
+
+Show button if availableRewards > 0 and !hasClaimedReward.
+
+On success, refresh reward data.
+
+ Fund rewards pool:
+
+REWARD_TOKEN.approve(governor, amount)
+
+SPYDAOGovernor.distributeRewards(amount)
+
+Dev/admin-only UI: “Add X mUSD to rewards pool”.
+
+ Execute proposal:
+
+When state == Succeeded and !executed:
+
+Read SP500Proposal to get (companyTicker, shareholderProposalId, voteFor).
+
+Rebuild:
+
+targets = [governorAddress]
+
+values = [0]
+
+calldatas = [abi.encode(companyTicker, shareholderProposalId, voteFor)]
+
+Compute descriptionHash = keccak256(bytes(originalDescription)) from stored description.
+
+Call execute(targets, values, calldatas, descriptionHash).
+
+3.5. UI / UX states
+
+ Clear compliance UX:
+
+Show KYC / sanctions / pause state in header & near action buttons.
+
+Disable actions where they’d revert.
+
+ Governance UX:
+
+Proposals list page.
+
+Proposal detail page:
+
+Ticker, external proposal ID, DAO recommendation, description.
+
+Vote buttons + voting power display.
+
+Reward info + claim button.
+
+Execution status + execute button (for whoever is allowed / if you want fully self-service).
+
+ Dev-only panels:
+
+Mock SPY price setter.
+
+mUSD faucet (and optional mint).
+
+Reward pool funding.
