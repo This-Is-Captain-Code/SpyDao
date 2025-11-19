@@ -72,25 +72,29 @@
 \end{frame}
 }
 
-% Slide 1: Unlocking Trillions
+% Slide: Unlocking Trillions
 \begin{frame}{Unlocking Trillions}
 \vspace{0.5cm}
 \begin{center}
     \begin{tikzpicture}
-        \node[circle,fill=lightblue,text=white,minimum size=4.5cm] at (0,0) {
-            \begin{minipage}{4cm}
+        % Circle background
+        \node[circle,fill=lightblue,inner sep=0pt,minimum size=5cm] (c) at (0,0) {};
+
+        % Centered text inside circle
+        \node[text=white] at (c.center) {%
+            \begin{minipage}{4.5cm}
                 \centering
-                {\fontsize{50}{60}\selectfont\$55T}\\[0.3cm]
-                {\Large in index funds}
+                {\fontsize{48}{52}\selectfont \$55T\,+}\\[0.25cm]
+                {\large in global index funds}
             \end{minipage}
         };
     \end{tikzpicture}
     
     \vspace{1cm}
-    {\Large\textcolor{mainblue}{\textbf{Zero voting power for retail investors}}}
+    {\Large\textcolor{mainblue}{\textbf{Retail holders have almost no direct voice}}}
     
     \vspace{0.5cm}
-    {\large Unlock corporate influence at scale}
+    {\large Trillions in passive capital, no coordinated governance layer}
 \end{center}
 \end{frame}
 
@@ -347,46 +351,56 @@
 \end{center}
 \end{frame}
 
-% Slide 12: Compliant Global Economic Access
+% Slide: Compliant Global Economic Access
 \begin{frame}{Compliant Global Economic Access}
 \vspace{0.5cm}
 \begin{center}
-    \begin{tikzpicture}
-        % KYC Flow
-        \node[rectangle,fill=lightblue,text=white,minimum width=3cm,minimum height=1.2cm,rounded corners] at (-4,0) {
+    \begin{tikzpicture}[>=stealth]
+
+        % Nodes
+        \node[rectangle,fill=lightblue,text=white,
+              minimum width=3cm,minimum height=1.2cm,
+              rounded corners] (user) at (-4,0) {
             \Large\faUser\ User
         };
         
-        \draw[->,ultra thick,mainblue] (-2.5,0) -- (-1,0);
-        
-        \node[rectangle,fill=accentgold,text=white,minimum width=3.5cm,minimum height=1.2cm,rounded corners] at (0,0) {
-            \Large\faIdCard\ KYC Check
+        \node[rectangle,fill=accentgold,text=white,
+              minimum width=3.5cm,minimum height=1.2cm,
+              rounded corners] (kyc) at (0,0) {
+            \Large\faIdCard\ KYC \& Screening
         };
         
-        \draw[->,ultra thick,mainblue] (1.75,0) -- (3.25,0);
-        
-        \node[rectangle,fill=mainblue,text=white,minimum width=3cm,minimum height=1.2cm,rounded corners] at (5,0) {
-            \Large\faCheckCircle\ Verified
+        \node[rectangle,fill=mainblue,text=white,
+              minimum width=3cm,minimum height=1.2cm,
+              rounded corners] (vault) at (5,0) {
+            \Large\faCheckCircle\ Vault Access
         };
+
+        % Arrows
+        \draw[->,ultra thick,mainblue] (user.east) -- (kyc.west);
+        \draw[->,ultra thick,mainblue] (kyc.east) -- (vault.west);
         
-        % Security features below
-        \node[rectangle,fill=lightblue!30,draw=mainblue,thick,minimum width=10cm,minimum height=2cm,rounded corners] at (0.5,-2.5) {
+        % Controls box
+        \node[rectangle,fill=lightblue!30,draw=mainblue,thick,
+              minimum width=10cm,minimum height=2cm,
+              rounded corners] at (0.5,-2.5) {
             \begin{minipage}{9cm}
                 \centering
-                \textcolor{mainblue}{\faShieldAlt\ \textbf{Regulatory Compliance}}\\
-                \vspace{0.2cm}
-                \textcolor{darkgray}{SEC-compliant • AML/KYC verified • Global access}
+                \textcolor{mainblue}{\textbf{Rayls-Aligned Controls}}\\[0.2cm]
+                \textcolor{darkgray}{KYC + sanctions gating • Global pause (circuit breaker)\\
+                Oracle sanity checks • Time-delayed, capped broker withdrawals}
             \end{minipage}
         };
     \end{tikzpicture}
     
     \vspace{0.8cm}
-    {\Large\textbf{Secure, compliant, and accessible}}
+    {\Large\textbf{DeFi UX with institution-grade safeguards}}
     
     \vspace{0.3cm}
-    {\large Regulation-friendly governance for everyone}
+    {\large Governance signals risk \& compliance teams can live with}
 \end{center}
 \end{frame}
+
 
 % Call to Action Slide
 {
