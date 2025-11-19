@@ -74,12 +74,15 @@ class TradingWorker {
       console.error('✗ Alpaca connection failed:', error);
     }
 
-    // Test SPY tracker
+    // Test SPY tracker (optional - uses cheerio which may not be needed for core features)
     try {
-      const composition = await new (await import('./services/spyTrackerService.js')).default().getSPYComposition();
+      const SPYTrackerModule = await import('./services/spyTrackerService.js');
+      const SPYTrackerService = SPYTrackerModule.default;
+      const tracker = new SPYTrackerService();
+      const composition = await tracker.getSPYComposition();
       console.log('✓ SPY tracker service working');
     } catch (error) {
-      console.error('✗ SPY tracker service failed:', error);
+      console.warn('⚠ SPY tracker service not available (cheerio may not be installed) - this is optional:', error instanceof Error ? error.message : error);
     }
 
     console.log('Services initialized');
