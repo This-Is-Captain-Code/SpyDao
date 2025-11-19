@@ -6,18 +6,22 @@ export function DAppHeader() {
   const [location] = useLocation();
 
   return (
-    <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4 max-w-6xl">
-        <div className="flex items-center justify-between">
+    <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 glass-nav rounded-2xl w-[85%]">
+      <div className="mx-auto max-w-8xl px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-14 sm:h-16">
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity" data-testid="link-home">
-            <span className="text-2xl font-bold">spy.dao</span>
+            <span className="text-lg font-semibold text-gray-900 dark:text-black">spy.dao</span>
           </Link>
 
           <nav className="flex items-center gap-2">
             <Link href="/vault">
               <Button
-                variant={location === '/vault' ? 'default' : 'ghost'}
                 size="sm"
+                className={
+                  location === '/vault' 
+                    ? 'bg-black hover:bg-gray-800 text-white' 
+                    : 'bg-transparent text-gray-900 dark:text-black hover:bg-gray-100 dark:hover:bg-gray-200'
+                }
                 data-testid="nav-vault"
               >
                 <Coins className="mr-2 h-4 w-4" />
@@ -26,8 +30,12 @@ export function DAppHeader() {
             </Link>
             <Link href="/governance">
               <Button
-                variant={location === '/governance' ? 'default' : 'ghost'}
                 size="sm"
+                className={
+                  location === '/governance' 
+                    ? 'bg-black hover:bg-gray-800 text-white' 
+                    : 'bg-transparent text-gray-900 dark:text-black hover:bg-gray-100 dark:hover:bg-gray-200'
+                }
                 data-testid="nav-governance"
               >
                 <Vote className="mr-2 h-4 w-4" />
@@ -35,7 +43,11 @@ export function DAppHeader() {
               </Button>
             </Link>
             <Link href="/">
-              <Button variant="outline" size="sm" data-testid="nav-home">
+              <Button 
+                className="bg-transparent text-gray-900 dark:text-black hover:bg-gray-100 dark:hover:bg-gray-200 border-gray-300 dark:border-gray-700" 
+                size="sm" 
+                data-testid="nav-home"
+              >
                 <Home className="mr-2 h-4 w-4" />
                 Home
               </Button>
